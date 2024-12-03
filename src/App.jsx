@@ -11,7 +11,7 @@ import { CartContextProvider } from "./Components/Store/CartContext";
 import { UserProgressContextProvider } from "./Components/Store/UserProgressContext";
 
 function App() {
-  const [currentPage, setCurrentPage] = useState("food");
+  const [currentPage, setCurrentPage] = useState("products");
   const [loggedIn, setLoggedIn] = useState(false);
 
   const [userData, setUserData] = useState(
