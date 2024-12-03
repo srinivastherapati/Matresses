@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&family=Lato:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 
 * {
   box-sizing: border-box;
@@ -6,11 +6,11 @@
 
 body {
   margin: 0;
-  font-family: "Raleway", sans-serif;
+  font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(#29251c, #2c2306);
-  color: #d9e2f1;
+  background: linear-gradient(#f0f4f8, #e3e6eb);
+  color: #324a5e;
   min-height: 100vh;
 }
 
@@ -18,6 +18,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem;
+  background-color: #324a5e;
+  color: #ffffff;
 }
 
 #main-header #title {
@@ -31,21 +34,33 @@ body {
   height: 4rem;
   object-fit: contain;
   border-radius: 50%;
-  border: 2px solid #ffc404;
+  border: 2px solid #ff7058;
 }
 
 #main-header button {
-  font-size: 1.5rem;
-  font-family: "Lato", sans-serif;
+  font-size: 1rem;
+  font-family: "Roboto", sans-serif;
+  background-color: #ff7058;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  height: 3rem;
+}
+
+#main-header button:hover {
+  background-color: #d6604d;
 }
 
 h1 {
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
   font-weight: 700;
   font-size: 2rem;
   margin: 0;
-  color: #ffc404;
-  letter-spacing: 0.2rem;
+  color: #ffffff;
+  letter-spacing: 0.1rem;
   text-transform: uppercase;
 }
 
@@ -61,11 +76,17 @@ h1 {
 }
 
 .meal-item {
-  background-color: #1d1a16;
+  background-color: #ffffff;
   border-radius: 1rem;
   overflow: hidden;
   text-align: center;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.meal-item:hover {
+  transform: translateY(-0.5rem);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .meal-item article {
@@ -93,8 +114,8 @@ h1 {
 
 .meal-item-price {
   display: inline-block;
-  background-color: #312c1d;
-  color: #ffc404;
+  background-color: #324a5e;
+  color: #ffffff;
   font-size: 0.9rem;
   font-weight: bold;
   padding: 0.5rem 2rem;
@@ -123,12 +144,12 @@ h1 {
 }
 
 .modal-actions .text-button {
-  color: #1d1a16;
+  color: #324a5e;
 }
 
 .modal-actions .text-button:hover,
 .modal-actions .text-button:active {
-  color: #312c1d;
+  color: #ff7058;
 }
 
 .cart-total {
@@ -137,7 +158,7 @@ h1 {
   margin: 2rem 0;
   font-size: 1.15rem;
   font-weight: bold;
-  color: #46443c;
+  color: #324a5e;
 }
 
 .cart-item {
@@ -164,17 +185,18 @@ h1 {
   height: 1.5rem;
   border-radius: 50%;
   border: none;
-  background-color: #312c1d;
-  color: #ffc404;
+  background-color: #324a5e;
+  color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .cart-item-actions button:hover,
 .cart-item-actions button:active {
-  background-color: #1d1a16;
-  color: #ffab04;
+  background-color: #ff7058;
+  color: #ffffff;
 }
 
 .control {
@@ -206,18 +228,19 @@ h1 {
 .button {
   font: inherit;
   cursor: pointer;
-  background-color: #ffc404;
-  border: 1px solid #ffc404;
-  color: #1f1a09;
+  background-color: #324a5e;
+  border: 1px solid #324a5e;
+  color: #ffffff;
   padding: 0.5rem 1.5rem;
   border-radius: 4px;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .button:hover,
 .button:active {
-  background-color: #ffab04;
-  border-color: #ffab04;
-  color: #1f1a09;
+  background-color: #ff7058;
+  border-color: #ff7058;
+  color: #ffffff;
 }
 
 .text-button {
@@ -225,19 +248,19 @@ h1 {
   cursor: pointer;
   background-color: transparent;
   border: none;
-  color: #ffc404;
+  color: #324a5e;
 }
 
 .text-button:hover,
 .text-button:active {
-  color: #ffab04;
+  color: #ff7058;
 }
 
 .modal {
-  background-color: #e4ddd4;
+  background-color: #ffffff;
   border-radius: 6px;
   border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 1rem;
   width: 80%;
   max-width: 40rem;
@@ -245,7 +268,7 @@ h1 {
 }
 
 .modal::backdrop {
-  background-color: rgba(0, 0, 0, 0.55);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 @keyframes fade-slide-up {
@@ -258,90 +281,4 @@ h1 {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* Modal styles */
-.review-modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.review-modal {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.review-rating-container {
-  margin: 1rem 0;
-}
-
-.review-star {
-  font-size: 2rem;
-  cursor: pointer;
-  color: #ccc;
-}
-
-.review-star.selected {
-  color: gold;
-}
-
-textarea {
-  width: 100%;
-  height: 80px;
-  margin: 1rem 0;
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  resize: none;
-}
-
-.review-modal-actions button {
-  margin: 0.5rem;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.review-modal-actions button:first-child {
-  background: #ccc;
-  color: black;
-}
-
-.review-modal-actions button:last-child {
-  background: #007bff;
-  color: white;
-}
-
-.review-feedback {
-  margin-top: 1rem;
-  font-weight: bold;
-  color: green;
-}
-
-.admin-actions {
-  cursor: pointer;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  width: 100px;
 }
