@@ -27,6 +27,7 @@ function LoginPage({ setLoggedIn, setUserData }) {
       console.log(userData);
       setUserData(userData);
       setLoggedIn(true);
+      window.location.reload();
     } catch (error) {
       alert(error.message);
     }
