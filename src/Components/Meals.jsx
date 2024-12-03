@@ -133,6 +133,33 @@ export default function Meals({ isAdmin }) {
     zIndex: "1000",
   };
 
+  const handleAddProduct = () => {
+    setCurrentProduct({
+      name: "",
+      imageUrl: "",
+      stock: 1,
+      description: "",
+      price: "",
+      category: "KING",
+      type: "MATTRESSES",
+    });
+    setIsAdd(true);
+    setShowAddModal(true);
+  };
+
+  const handleAddProductSuccess = () => {
+    setIsAdd(false);
+    setShowAddModal(false);
+    window.location.reload();
+  };
+
+  const handleEditProduct = (product) => {
+    console.log(product);
+    setCurrentProduct(product);
+    setIsAdd(false);
+    setShowAddModal(true); // Open modal for editing
+  };
+
   const displayedProducts =
     searchQuery ||
     sortOption ||
@@ -220,10 +247,7 @@ export default function Meals({ isAdmin }) {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => {
-            setCurrentProduct(null);
-            setShowAddModal(true);
-          }}
+          onClick={() => handleAddProduct()}
         >
           Add New Meal
         </Button>
@@ -232,9 +256,7 @@ export default function Meals({ isAdmin }) {
           open={showAddModal}
           onClose={() => setShowAddModal(false)}
           onAddSuccess={() => {
-            setShowAddModal(false);
-            setIsAdd(false);
-            window.location.reload();
+            handleAddProductSuccess;
           }}
           currentProduct={currentProduct}
           isAdd={isAdd}
@@ -242,7 +264,12 @@ export default function Meals({ isAdmin }) {
 
         <ul id="meals">
           {displayedProducts.map((product) => (
-            <MealItem isAdmin={isAdmin} key={product.id} product={product} />
+            <MealItem
+              isAdmin={isAdmin}
+              key={product.id}
+              product={product}
+              onEdit={handleEditProduct}
+            />
           ))}
         </ul>
       </Box>
