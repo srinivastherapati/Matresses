@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Box, TextField, Button, Typography } from "@mui/material";
+import {
+  Modal,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  MenuItem,
+} from "@mui/material";
 import useHttp from "../hooks/useHttp";
 import { addProduct, updateProduct } from "./ServerRequests";
 
@@ -25,21 +32,24 @@ export default function AddMealModal({
   const [name, setName] = useState(currentProduct.name);
   const [imageUrl, setImageUrl] = useState(currentProduct.imageUrl);
   const [description, setDescription] = useState(currentProduct.description);
-  const [stock, setstock] = useState(1);
-  const [price,setPrice]=useState(currentProduct.price);
+  const [stock, setStock] = useState(1);
+  const [price, setPrice] = useState(currentProduct.price);
+  const [category, setCategory] = useState("queen");
+  const [type, setType] = useState("Mattresses");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const { sendRequest } = useHttp();
 
-  // If currentProduct is provided (for edit), prefill form fields
   useEffect(() => {
     if (currentProduct) {
       setName(currentProduct.name);
       setImageUrl(currentProduct.imageUrl);
       setDescription(currentProduct.description);
       setPrice(currentProduct.price);
-      setstock(currentProduct.stock || 1);
+      setStock(currentProduct.stock || 1);
+      setCategory(currentProduct.category || "queen");
+      setType(currentProduct.type || "Mattresses");
     }
   }, [currentProduct]);
 
@@ -49,7 +59,9 @@ export default function AddMealModal({
       imageUrl,
       description,
       stock,
-      category: currentProduct.category.toUpperCase(),
+      price,
+      category: category.toUpperCase(),
+      type,
     };
 
     try {
@@ -57,32 +69,22 @@ export default function AddMealModal({
       setError(null);
 
       if (!isAdd) {
-        try {
-          const response = updateProduct(currentProduct.id, productData);
-          if (response) {
-            alert("Updated Product Successfully ! ");
-            window.location.reload();
-          }
-        } catch (error) {
-          alert("There was an error : " + error);
+        const response = await updateProduct(currentProduct.id, productData);
+        if (response) {
+          alert("Updated Product Successfully!");
+          window.location.reload();
         }
       } else {
-        console.log("Came Here");
-        try {
-          const response = addProduct(productData);
-          if (response) {
-            alert("Added Product Successfully ! ");
-            window.location.reload();
-          }
-        } catch (error) {
-          alert("There was an error : " + error);
+        const response = await addProduct(productData);
+        if (response) {
+          alert("Added Product Successfully!");
+          window.location.reload();
         }
       }
-      // onAddSuccess(); // Trigger the callback to refresh the list
-      onClose(); // Close the modal
+      onClose();
     } catch (err) {
       setError(err.message);
-      alert("Failed to submit meal: " + err.message);
+      alert("Failed to submit product: " + err.message);
     } finally {
       setIsLoading(false);
     }
@@ -124,10 +126,11 @@ export default function AddMealModal({
             onChange={(e) => setDescription(e.target.value)}
             required
           />
-            <TextField
+          <TextField
             label="Price"
             fullWidth
             margin="normal"
+            type="number"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             required
@@ -138,16 +141,42 @@ export default function AddMealModal({
             margin="normal"
             type="number"
             value={stock}
-            onChange={(e) => setstock(Math.max(1, e.target.value))}
+            onChange={(e) => setStock(Math.max(1, e.target.value))}
             required
           />
+          <TextField
+            select
+            label="Category"
+            fullWidth
+            margin="normal"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <MenuItem value="queen">QUEEN</MenuItem>
+            <MenuItem value="king">KING</MenuItem>
+            <MenuItem value="full">FULL</MenuItem>
+            <MenuItem value="twin">TWIN</MenuItem>
+          </TextField>
+          <TextField
+            select
+            label="Type"
+            fullWidth
+            margin="normal"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+          >
+            <MenuItem value="Mattresses">Mattresses</MenuItem>
+            <MenuItem value="Bedroom utilities">Bedroom utilities</MenuItem>
+            <MenuItem value="Furniture">Furniture</MenuItem>
+            <MenuItem value="Other">Other</MenuItem>
+          </TextField>
           {error && <p style={{ color: "red" }}>{error}</p>}
           <Button
             variant="contained"
             color="primary"
             disabled={isLoading}
             sx={{ marginTop: "20px" }}
-            onClick={() => handleSubmit()}
+            onClick={handleSubmit}
           >
             {isLoading ? "Processing..." : !isAdd ? "Update Item" : "Add Item"}
           </Button>

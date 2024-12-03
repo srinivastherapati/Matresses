@@ -85,7 +85,7 @@ export default function Meals({ isAdmin }) {
       stock: 1,
       description: "",
       price: "",
-      category: category,
+      category: "",
     });
     setIsAdd(true);
     setShowAddModal(true);
