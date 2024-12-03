@@ -3,7 +3,16 @@ import useHttp from "../hooks/useHttp.jsx";
 import ErrorPage from "./ErrorPage.jsx";
 import MealItem from "./MealItem.jsx";
 import AddMealModal from "./AddMealModal.jsx";
-import { Button, TextField, Select, MenuItem, Box } from "@mui/material";
+import {
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  Box,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+} from "@mui/material";
 import { API_BASE_URL } from "./ServerRequests.jsx";
 
 const requestConfig = {};
@@ -14,182 +23,229 @@ export default function Meals({ isAdmin }) {
     isLoading,
     error,
   } = useHttp(`${API_BASE_URL}/products/get`, requestConfig, []);
-
   const [isAdd, setIsAdd] = useState(false);
-
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [currentProduct, setCurrentProduct] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
 
   const products = loadProducts || [];
 
+  // Filter and Sort Logic
   const handleSearch = (query) => {
     setSearchQuery(query);
-    const lowerCaseQuery = query.toLowerCase();
-    const matchedProducts = products.filter(
-      (product) =>
-        product.name.toLowerCase().includes(lowerCaseQuery) ||
-        product.description.toLowerCase().includes(lowerCaseQuery)
+    updateFilteredProducts(
+      query,
+      sortOption,
+      selectedCategories,
+      selectedTypes
     );
-    setFilteredProducts(matchedProducts);
   };
 
   const handleSort = (option) => {
     setSortOption(option);
-    const sortedProducts = [
-      ...(filteredProducts.length ? filteredProducts : products),
-    ];
-
-    if (option === "A-Z") {
-      sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (option === "Z-A") {
-      sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
-    } else if (option === "price: low to high") {
-      sortedProducts.sort((a, b) => a.price - b.price);
-    } else if (option === "price: high to low") {
-      sortedProducts.sort((a, b) => b.price - a.price);
-    }
-
-    setFilteredProducts(sortedProducts);
+    updateFilteredProducts(
+      searchQuery,
+      option,
+      selectedCategories,
+      selectedTypes
+    );
   };
 
-  const handleAddMealSuccess = () => {
-    setIsAdd(false);
-    setShowAddModal(false);
-    window.location.reload();
+  const handleCategoryChange = (category) => {
+    const updatedCategories = selectedCategories.includes(category)
+      ? selectedCategories.filter((cat) => cat !== category)
+      : [...selectedCategories, category];
+    setSelectedCategories(updatedCategories);
+    updateFilteredProducts(
+      searchQuery,
+      sortOption,
+      updatedCategories,
+      selectedTypes
+    );
+  };
+
+  const handleTypeChange = (type) => {
+    const updatedTypes = selectedTypes.includes(type)
+      ? selectedTypes.filter((t) => t !== type)
+      : [...selectedTypes, type];
+    setSelectedTypes(updatedTypes);
+    updateFilteredProducts(
+      searchQuery,
+      sortOption,
+      selectedCategories,
+      updatedTypes
+    );
+  };
+
+  const updateFilteredProducts = (query, sortOption, categories, types) => {
+    let filtered = [...products];
+
+    // Apply search filter
+    if (query) {
+      const lowerCaseQuery = query.toLowerCase();
+      filtered = filtered.filter(
+        (product) =>
+          product.name.toLowerCase().includes(lowerCaseQuery) ||
+          product.description.toLowerCase().includes(lowerCaseQuery)
+      );
+    }
+
+    // Apply category filter
+    if (categories.length) {
+      filtered = filtered.filter((product) =>
+        categories.includes(product.category)
+      );
+    }
+
+    // Apply type filter
+    if (types.length) {
+      filtered = filtered.filter((product) => types.includes(product.type));
+    }
+
+    // Apply sorting
+    if (sortOption) {
+      if (sortOption === "A-Z") {
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (sortOption === "Z-A") {
+        filtered.sort((a, b) => b.name.localeCompare(a.name));
+      } else if (sortOption === "price: low to high") {
+        filtered.sort((a, b) => a.price - b.price);
+      } else if (sortOption === "price: high to low") {
+        filtered.sort((a, b) => b.price - a.price);
+      }
+    }
+
+    setFilteredProducts(filtered);
+  };
+
+  const sidebarStyles = {
+    position: "fixed",
+    top: "85px",
+    left: "0",
+    width: "250px",
+    height: "calc(100% - 60px)",
+    padding: "20px",
+    boxSizing: "border-box",
+    zIndex: "1000",
   };
 
   const displayedProducts =
-    searchQuery || sortOption ? filteredProducts : products;
+    searchQuery ||
+    sortOption ||
+    selectedCategories.length ||
+    selectedTypes.length
+      ? filteredProducts
+      : products;
 
+  // Error and Loading States
   if (isLoading) {
     return <p className="center">Fetching Items....</p>;
   }
   if (error) {
-    return <ErrorPage title="failed to fetch meals" message={error.message} />;
+    return <ErrorPage title="Failed to Fetch Meals" message={error.message} />;
   }
 
-  const handleEditMeal = (product) => {
-    console.log(product);
-    setCurrentProduct(product);
-    setIsAdd(false);
-    setShowAddModal(true); // Open modal for editing
-  };
-
-  const handleAddMeal = (product) => {
-    setCurrentProduct({
-      name: "",
-      imageUrl: "",
-      stock: 1,
-      description: "",
-      price: "",
-      category: "",
-    });
-    setIsAdd(true);
-    setShowAddModal(true);
-  };
+  // Sidebar Content
+  const categories = ["QUEEN", "KING", "FULL", "TWIN"];
+  const types = ["MATRESSES", "FURNITURE", "ACCESSORIES", "OTHER"];
 
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "20px",
-          marginTop: "20px",
-        }}
-      >
-        {/* Search Bar */}
+    <Box sx={{ display: "flex" }}>
+      {/* Sidebar */}
+      <Box sx={sidebarStyles}>
+        <h3>Filters</h3>
         <TextField
-          label="Search Meals"
+          label="Search"
           variant="outlined"
           size="small"
+          fullWidth
           value={searchQuery}
           onChange={(e) => handleSearch(e.target.value)}
-          sx={{
-            flex: 1, // Take available space
-            maxWidth: "500px", // Ensure consistent width
-            backgroundColor: "rgba(255, 255, 255, 0.8)",
-            color: "black",
-            borderRadius: "10px",
-            height: "40px", // Consistent height
-            marginLeft: "72px",
-          }}
-          InputLabelProps={{
-            style: { color: "black" },
-          }}
-          inputProps={{
-            style: { color: "black" },
-          }}
         />
-
-        {/* Sort and Add Meal */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <Select
-            value={sortOption}
-            onChange={(e) => handleSort(e.target.value)}
-            size="small"
-            displayEmpty
-            sx={{
-              backgroundColor: "rgba(255, 255, 255, 0.8)",
-              color: "black",
-              borderRadius: "10px",
-              height: "40px", // Align height
-              "& .MuiSelect-icon": { color: "black" },
-              marginRight: isAdmin ? "0px" : "78px",
-            }}
-            renderValue={(selected) => selected || "Sort By"}
-          >
-            <MenuItem value="A-Z">A-Z</MenuItem>
-            <MenuItem value="Z-A">Z-A</MenuItem>
-            <MenuItem value="price: low to high">Price: Low to High</MenuItem>
-            <MenuItem value="price: high to low">Price: High to Low</MenuItem>
-          </Select>
-          {isAdmin && (
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#ffc404",
-                color: "black",
-                borderRadius: "10px",
-                height: "40px", // Align height
-                "&:hover": { backgroundColor: "#e6b800" },
-                marginRight: "78px",
-              }}
-              onClick={() => {
-                setCurrentProduct(null);
-                handleAddMeal();
-              }}
-            >
-              Add New Item
-            </Button>
-          )}
-        </Box>
+        <h4>Sort By</h4>
+        <Select
+          value={sortOption}
+          onChange={(e) => handleSort(e.target.value)}
+          fullWidth
+        >
+          <MenuItem value="A-Z">A-Z</MenuItem>
+          <MenuItem value="Z-A">Z-A</MenuItem>
+          <MenuItem value="price: low to high">Price: Low to High</MenuItem>
+          <MenuItem value="price: high to low">Price: High to Low</MenuItem>
+        </Select>
+        <h4>Category</h4>
+        <FormGroup>
+          {categories.map((category) => (
+            <FormControlLabel
+              key={category}
+              control={
+                <Checkbox
+                  checked={selectedCategories.includes(category)}
+                  onChange={() => handleCategoryChange(category)}
+                />
+              }
+              label={category}
+            />
+          ))}
+        </FormGroup>
+        <h4>Type</h4>
+        <FormGroup>
+          {types.map((type) => (
+            <FormControlLabel
+              key={type}
+              control={
+                <Checkbox
+                  checked={selectedTypes.includes(type)}
+                  onChange={() => handleTypeChange(type)}
+                />
+              }
+              label={type}
+            />
+          ))}
+        </FormGroup>
       </Box>
 
-      {/* Add Meal Modal */}
-      <AddMealModal
-        open={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onAddSuccess={handleAddMealSuccess}
-        currentProduct={currentProduct}
-        isAdd={isAdd}
-      />
+      {/* Main Content */}
+      <Box
+        sx={{
+          marginLeft: "260px",
+          width: "calc(100% - 260px)",
+          padding: "20px",
+        }}
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            setCurrentProduct(null);
+            setShowAddModal(true);
+          }}
+        >
+          Add New Meal
+        </Button>
 
-      {/* Meal List */}
-      <ul id="meals">
-        {displayedProducts.map((product) => (
-          <MealItem
-            isAdmin={isAdmin}
-            key={product.id}
-            product={product}
-            onEdit={handleEditMeal}
-          />
-        ))}
-      </ul>
-    </>
+        <AddMealModal
+          open={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onAddSuccess={() => {
+            setShowAddModal(false);
+            setIsAdd(false);
+            window.location.reload();
+          }}
+          currentProduct={currentProduct}
+          isAdd={isAdd}
+        />
+
+        <ul id="meals">
+          {displayedProducts.map((product) => (
+            <MealItem isAdmin={isAdmin} key={product.id} product={product} />
+          ))}
+        </ul>
+      </Box>
+    </Box>
   );
 }
