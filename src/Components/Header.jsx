@@ -7,6 +7,7 @@ import "./Header.css";
 
 export default function Header({
   isAdmin,
+  isLoggedIn,
   userData,
   onLogout,
   setCurrentPage,
@@ -37,12 +38,6 @@ export default function Header({
       <nav className="header-nav">
         {/* Navigation links */}
         <div className="header-links">
-          {/* <span className="header-link" onClick={() => setCurrentPage("food")}>FOOD</span>
-          <span className="header-link" onClick={() => setCurrentPage("beverages")}>BEVERAGES</span>
-          <span className="header-link" onClick={() => setCurrentPage("grocery")}>GROCERY</span>
-          <span className="header-link" onClick={() => setCurrentPage("dairy")}>DAIRY</span>
-          <span className="header-link" onClick={() => setCurrentPage("snacks")}>SNACKS</span>
-          <span className="header-link" onClick={() => setCurrentPage("gas")}>GAS</span> */}
           {isAdmin && (
             <span
               className="header-link strong-link"
@@ -68,10 +63,20 @@ export default function Header({
 
         {/* User info and logout */}
         <div className="header-user">
-          <span>{userData.userEmail}</span>
-          <button className="logout-button" onClick={onLogout}>
-            Logout
-          </button>
+          <span>{userData != null ? userData.userEmail : ""}</span>
+          {!isLoggedIn && (
+            <button
+              className="logout-button"
+              onClick={() => setCurrentPage("login")}
+            >
+              Login
+            </button>
+          )}
+          {isLoggedIn && (
+            <button className="logout-button" onClick={onLogout}>
+              Logout
+            </button>
+          )}
         </div>
       </nav>
     </header>

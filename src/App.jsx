@@ -11,12 +11,18 @@ import { CartContextProvider } from "./Components/Store/CartContext";
 import { UserProgressContextProvider } from "./Components/Store/UserProgressContext";
 
 function App() {
-  const [currentPage, setCurrentPage] = useState("food");
+  const [currentPage, setCurrentPage] = useState("products");
   const [loggedIn, setLoggedIn] = useState(false);
 
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("userDetails"))
   );
+
+  useEffect(() => {
+    if (userData === null) {
+      setLoggedIn(false);
+    }
+  }, [userData]);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -25,7 +31,8 @@ function App() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("loggedIn");
+    localStorage.clear();
+    window.location.reload();
     setLoggedIn(false);
   };
 
@@ -45,29 +52,30 @@ function App() {
           <div style={mainContainerStyle}>
             <div style={{ width: "100%" }}>
               <Header
-                isAdmin={userData.role === "admin"}
+                isLoggedIn={loggedIn}
+                isAdmin={userData ? userData.role === "admin" : false}
                 userData={userData}
                 onLogout={handleLogout}
                 setCurrentPage={setCurrentPage}
               />
               {currentPage == "products" && (
-                <Meals isAdmin={userData.role === "admin"} />
+                <Meals isAdmin={userData ? userData.role === "admin" : null} />
               )}
-              {userData.role != "admin" && currentPage == "your-orders" && (
-                <CustomerOrders />
-              )}
-              {userData.role === "admin" && currentPage == "all-orders" && (
-                <AllOrders />
-              )}
-              {userData.role === "admin" && currentPage == "all-users" && (
-                <AllUsers />
-              )}
+              {userData &&
+                userData.role != "admin" &&
+                currentPage == "your-orders" && <CustomerOrders />}
+              {userData &&
+                userData.role === "admin" &&
+                currentPage == "all-orders" && <AllOrders />}
+              {userData &&
+                userData.role === "admin" &&
+                currentPage == "all-users" && <AllUsers />}
               <Cart />
-              <Checkout />
+              {userData && <Checkout />}
             </div>
           </div>
         )}
-        {currentPage === "login" && (
+        {currentPage == "login" && (
           <LoginPage setUserData={setUserData} setLoggedIn={setLoggedIn} />
         )}
       </CartContextProvider>
