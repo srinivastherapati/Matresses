@@ -8,16 +8,12 @@ import { API_BASE_URL } from "./ServerRequests.jsx";
 
 const requestConfig = {};
 
-export default function Meals({ isAdmin, category }) {
+export default function Meals({ isAdmin }) {
   const {
     response: loadProducts,
     isLoading,
     error,
-  } = useHttp(
-    `${API_BASE_URL}/products/get?category=${category.toUpperCase()}`,
-    requestConfig,
-    []
-  );
+  } = useHttp(`${API_BASE_URL}/products/get`, requestConfig, []);
 
   const [isAdd, setIsAdd] = useState(false);
 
@@ -69,7 +65,7 @@ export default function Meals({ isAdmin, category }) {
     searchQuery || sortOption ? filteredProducts : products;
 
   if (isLoading) {
-    return <p className="center">Fetching {category} Products....</p>;
+    return <p className="center">Fetching Items....</p>;
   }
   if (error) {
     return <ErrorPage title="failed to fetch meals" message={error.message} />;
