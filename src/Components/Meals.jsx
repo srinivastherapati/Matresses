@@ -99,6 +99,7 @@ export default function Meals({ isAdmin }) {
           alignItems: "center",
           justifyContent: "space-between",
           marginBottom: "20px",
+          marginTop: "20px",
         }}
       >
         {/* Search Bar */}
