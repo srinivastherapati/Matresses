@@ -59,7 +59,11 @@ function App() {
                 setCurrentPage={setCurrentPage}
               />
               {currentPage == "products" && (
-                <Meals isAdmin={userData ? userData.role === "admin" : null} />
+                <Meals
+                  isAdmin={userData ? userData.role === "admin" : null}
+                  isLoggedIn={loggedIn}
+                  setCurrentPage={setCurrentPage}
+                />
               )}
               {userData &&
                 userData.role != "admin" &&

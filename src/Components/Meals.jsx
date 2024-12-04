@@ -17,7 +17,7 @@ import { API_BASE_URL } from "./ServerRequests.jsx";
 
 const requestConfig = {};
 
-export default function Meals({ isAdmin }) {
+export default function Meals({ isAdmin, isLoggedIn, setCurrentPage }) {
   const {
     response: loadProducts,
     isLoading,
@@ -244,13 +244,15 @@ export default function Meals({ isAdmin }) {
           padding: "20px",
         }}
       >
-       {isAdmin && <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleAddProduct()}
-        >
-          Add New Item
-        </Button>}
+        {isAdmin && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleAddProduct()}
+          >
+            Add New Item
+          </Button>
+        )}
 
         <AddMealModal
           open={showAddModal}
@@ -265,6 +267,8 @@ export default function Meals({ isAdmin }) {
         <ul id="meals">
           {displayedProducts.map((product) => (
             <MealItem
+              setCurrentPage={setCurrentPage}
+              isLoggedIn={isLoggedIn}
               isAdmin={isAdmin}
               key={product.id}
               product={product}

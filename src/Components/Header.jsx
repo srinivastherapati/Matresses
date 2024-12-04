@@ -21,6 +21,11 @@ export default function Header({
   const userProgressCtx = useContext(UserProgressContext);
 
   function handleShowCart() {
+    if (!isLoggedIn) {
+      alert("Please login to continue !");
+      setCurrentPage("products");
+      return;
+    }
     userProgressCtx.showCart();
   }
 
@@ -54,7 +59,7 @@ export default function Header({
               USERS
             </span>
           )}
-          {!isAdmin  &&(
+          {isLoggedIn && !isAdmin && (
             <span
               className="header-link strong-link"
               onClick={() => setCurrentPage("your-orders")}
@@ -71,7 +76,6 @@ export default function Header({
 
         {/* User info and logout */}
         <div className="header-user">
-          <span>{userData != null ? userData.userEmail : ""}</span>
           {!isLoggedIn && (
             <button
               className="logout-button"
@@ -81,9 +85,12 @@ export default function Header({
             </button>
           )}
           {isLoggedIn && (
-            <button className="logout-button" onClick={onLogout}>
-              Logout
-            </button>
+            <>
+              <span>{userData != null ? userData.emailId : ""}</span>
+              <button className="logout-button" onClick={onLogout}>
+                Logout
+              </button>
+            </>
           )}
         </div>
       </nav>
