@@ -4,6 +4,8 @@ import Buttons from "./UI/Buttons";
 import CartContext from "./Store/CartContext.jsx";
 import UserProgressContext from "./Store/UserProgressContext.jsx";
 import "./Header.css";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 export default function Header({
   isAdmin,
@@ -71,7 +73,15 @@ export default function Header({
 
         {/* Cart button (not visible for admins) */}
         {!isAdmin && (
-          <Buttons onClick={handleShowCart}>Cart ({cartValue})</Buttons>
+          <Buttons
+            onClick={handleShowCart}
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            Cart ({cartValue}){" "}
+            <span>
+              <ShoppingCartIcon sx={{ marginLeft: "8px", padding: "0px" }} />{" "}
+            </span>
+          </Buttons>
         )}
 
         {/* User info and logout */}
@@ -87,8 +97,13 @@ export default function Header({
           {isLoggedIn && (
             <>
               <span>{userData != null ? userData.emailId : ""}</span>
-              <button className="logout-button" onClick={onLogout}>
+              <button
+                className="logout-button"
+                onClick={onLogout}
+                style={{ display: "flex", alignItems: "center" }}
+              >
                 Logout
+                <LogoutIcon sx={{ marginLeft: "8px" }} />
               </button>
             </>
           )}
