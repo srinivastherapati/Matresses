@@ -7,7 +7,6 @@ import {
   Typography,
   MenuItem,
 } from "@mui/material";
-import useHttp from "../hooks/useHttp";
 import { addProduct, updateProduct } from "./ServerRequests";
 
 const modalStyle = {
@@ -39,8 +38,6 @@ export default function AddMealModal({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const { sendRequest } = useHttp();
-
   useEffect(() => {
     if (currentProduct) {
       setName(currentProduct.name);
@@ -61,7 +58,7 @@ export default function AddMealModal({
       stock,
       price,
       category: category.toUpperCase(),
-      type:type.toUpperCase(),
+      type: type.toUpperCase(),
     };
 
     try {
