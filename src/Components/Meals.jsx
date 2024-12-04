@@ -247,7 +247,12 @@ export default function Meals({ isAdmin, isLoggedIn, setCurrentPage }) {
         {isAdmin && (
           <Button
             variant="contained"
-            color="primary"
+            sx={{
+              backgroundColor: "#ff7058",
+              "&:hover": {
+                backgroundColor: "#e65b4a", // Optional: Customize hover color
+              },
+            }}
             onClick={() => handleAddProduct()}
           >
             Add New Item
