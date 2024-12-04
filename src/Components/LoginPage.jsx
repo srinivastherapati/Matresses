@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography, Paper } from "@mui/material";
-import { registerUser, loginUser } from "./ServerRequests"; // Import API functions
+import { registerUser, loginUser } from "./ServerRequests";
 
 function LoginPage({ setLoggedIn, setUserData }) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [street, setStreet] = useState("");
   const [city, setCity] = useState("");
@@ -34,15 +36,20 @@ function LoginPage({ setLoggedIn, setUserData }) {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
     try {
       const newUser = {
-        userName: name,
+        firstName,
+        lastName,
         email,
         password,
         phoneNumber,
-        address: [`${street}, ${city}, ${state}, ${zip}`], // Address as a single formatted string
+        address: [`${street}, ${city}, ${state}, ${zip}`],
       };
-      console.log("Signup Payload:", newUser); // Log payload for debugging
+      console.log("Signup Payload:", newUser);
       await registerUser(newUser);
       alert("Signup successful! Please log in.");
       setIsLogin(true);
@@ -56,10 +63,10 @@ function LoginPage({ setLoggedIn, setUserData }) {
     <Box
       sx={{
         display: "flex",
+        justifyContent: "space-around",
         alignItems: "center",
-        justifyContent: "center",
         minHeight: "100vh",
-        backgroundImage: "url('/background.png')", // Path to your image
+        backgroundImage: "url('/background.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -71,11 +78,34 @@ function LoginPage({ setLoggedIn, setUserData }) {
           left: 0,
           width: "100%",
           height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.5)", // Fading effect
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
           zIndex: 1,
         },
       }}
     >
+      {/* Quote Section */}
+      <Box
+        sx={{
+          zIndex: 2,
+          color: "#fff",
+          textAlign: "left",
+          padding: "30px",
+          maxWidth: "40%",
+        }}
+      >
+        <Typography
+          variant="h3"
+          sx={{ fontWeight: "bold", color: "#ff7058", mb: 2 }}
+        >
+          "Wake Up to Comfort"
+        </Typography>
+        <Typography variant="h6" sx={{ color: "#fefefe" }}>
+          Find the perfect mattress for every sleeper. Experience unmatched
+          quality and design tailored just for you.
+        </Typography>
+      </Box>
+
+      {/* Login/Signup Box */}
       <Paper
         elevation={5}
         sx={{
@@ -83,10 +113,8 @@ function LoginPage({ setLoggedIn, setUserData }) {
           width: "400px",
           zIndex: 2,
           textAlign: "center",
-          backgroundColor: "rgba(255, 255, 255, 0.8)", // Semi-transparent background
-          backdropFilter: "blur(8px)", // Blur for frosted-glass effect
-          border: "1px solid rgba(255, 255, 255, 0.3)", // Optional border for enhanced visibility
-          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)", // Softer shadow to match transparency
+          backgroundColor: "rgba(255, 255, 255, 0.9)",
+          border: "1px solid rgba(255, 255, 255, 0.3)",
           borderRadius: "20px",
         }}
       >
@@ -97,11 +125,19 @@ function LoginPage({ setLoggedIn, setUserData }) {
           {!isLogin && (
             <>
               <TextField
-                label="Name"
+                label="First Name"
                 fullWidth
                 margin="normal"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+              <TextField
+                label="Last Name"
+                fullWidth
+                margin="normal"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 required
               />
               <TextField
@@ -166,18 +202,33 @@ function LoginPage({ setLoggedIn, setUserData }) {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          {!isLogin && (
+            <TextField
+              label="Confirm Password"
+              fullWidth
+              type="password"
+              margin="normal"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          )}
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 2, mb: 2 }}
+            sx={{ mt: 2, mb: 2, backgroundColor: "#324a5e" }}
           >
             {isLogin ? "Login" : "Sign Up"}
           </Button>
         </form>
-        <Button variant="text" onClick={togglePage}>
+        <Button
+          variant="text"
+          onClick={togglePage}
+          sx={{ color: "#ff7058", textTransform: "none" }}
+        >
           {isLogin
-            ? "Don't have an account? Sign Up"
+            ? "New here? Sign Up"
             : "Already have an account? Login"}
         </Button>
       </Paper>
