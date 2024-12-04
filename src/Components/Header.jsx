@@ -29,7 +29,7 @@ export default function Header({
       {/* Left section with logo and title */}
       <div id="title" className="header-title">
         <img src={logoImg} alt="Store Logo" />
-        <h1 className="header-link" onClick={() => setCurrentPage("food")}>
+        <h1 className="header-link" onClick={() => setCurrentPage("products")}>
           Mattress Paradise
         </h1>
       </div>
@@ -52,6 +52,14 @@ export default function Header({
               onClick={() => setCurrentPage("all-users")}
             >
               USERS
+            </span>
+          )}
+          {!isAdmin  &&(
+            <span
+              className="header-link strong-link"
+              onClick={() => setCurrentPage("your-orders")}
+            >
+              YOUR ORDERS
             </span>
           )}
         </div>

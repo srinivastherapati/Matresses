@@ -140,8 +140,8 @@ export default function Meals({ isAdmin }) {
       stock: 1,
       description: "",
       price: "",
-      category: "KING",
-      type: "MATTRESSES",
+      category: "",
+      type: "",
     });
     setIsAdd(true);
     setShowAddModal(true);
@@ -173,7 +173,7 @@ export default function Meals({ isAdmin }) {
     return <p className="center">Fetching Items....</p>;
   }
   if (error) {
-    return <ErrorPage title="Failed to Fetch Meals" message={error.message} />;
+    return <ErrorPage title="Failed to Fetch Items" message={error.message} />;
   }
 
   // Sidebar Content
@@ -244,13 +244,13 @@ export default function Meals({ isAdmin }) {
           padding: "20px",
         }}
       >
-        <Button
+       {isAdmin && <Button
           variant="contained"
           color="primary"
           onClick={() => handleAddProduct()}
         >
-          Add New Meal
-        </Button>
+          Add New Item
+        </Button>}
 
         <AddMealModal
           open={showAddModal}

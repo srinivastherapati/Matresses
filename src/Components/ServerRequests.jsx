@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_BASE_URL = "/api";
+export const API_BASE_URL = "http://localhost:8080/api";
 // Register user
 export const registerUser = async (userData) => {
   try {
@@ -119,7 +119,7 @@ export const addProduct = async (product) => {
     const response = await axios.post(`${API_BASE_URL}/products/add`, product);
     return response; // Return the response data if needed
   } catch (error) {
-    console.error("Error updating order status:", error);
+    console.error("Error adding product:", error);
     throw error; // Propagate the error to the caller
   }
 };
@@ -132,7 +132,7 @@ export const updateProduct = async (productId, product) => {
     );
     return response; // Return the response data if needed
   } catch (error) {
-    console.error("Error updating order status:", error);
+    console.error("Error updating order status:", error.message);
     throw error; // Propagate the error to the caller
   }
 };

@@ -8,32 +8,34 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Paper,
   CircularProgress,
 } from "@mui/material";
-import useHttp from "../hooks/useHttp";
 import ErrorPage from "./ErrorPage";
 import { getAllCustomers } from "./ServerRequests";
-import "./customerorders.css"; 
+
 
 const styles = {
   container: {
     padding: "20px",
     backgroundColor: "#2e2e2e",
+    minHeight: "100vh",
     color: "#fff",
-    borderRadius: "8px",
+    width: "100%",
+  },
+  table: {
+    borderCollapse: "collapse",
   },
   tableHeader: {
-    fontWeight: "bold",
-    fontSize: "16px",
+    backgroundColor: "#ff7058",
     color: "#fff",
-    backgroundColor: "#424242",
-    border: "none",
+    fontWeight: "bold",
   },
   tableCell: {
-
-    fontSize: "16px",
+    backgroundColor: "black",
     color: "black",
-    borderBottom: "1px solid #424242",
+    border: "none",
+    fontsize:"15px"
   },
 };
 
@@ -65,19 +67,19 @@ const AllUsers = () => {
 
   return (
     <Box className={styles.container}>
-      <TableContainer>
-        <Table className="MuiTable-root">
-          <TableHead className="MuiTableHead-root">
+      <TableContainer component={Paper} style={{ boxShadow: "none" }}>
+        <Table>
+          <TableHead >
             <TableRow>
-              <TableCell className="MuiTableCell-root">Customer Name</TableCell>
-              <TableCell className="MuiTableCell-root">Customer Email</TableCell>
-              <TableCell className="MuiTableCell-root" align="center">
+              <TableCell className={styles.tableHeader}>Customer Name</TableCell>
+              <TableCell className={styles.tableHeader}>Customer Email</TableCell>
+              <TableCell className={styles.tableHeader} align="center">
                 Number of Orders
               </TableCell>
-              <TableCell className="MuiTableCell-root" align="center">
+              <TableCell className={styles.tableHeader} align="center">
                 Total Order Value
               </TableCell>
-              <TableCell className="MuiTableCell-root" align="center">
+              <TableCell className={styles.tableHeader} align="center">
                 Last Order Date
               </TableCell>
             </TableRow>

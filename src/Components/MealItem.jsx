@@ -63,7 +63,7 @@ export default function MealItem({ product, isAdmin, onEdit }) {
               {product.rating}
             </span>{" "}
           </h3>
-          <p className="meal-item-price">{product.price}</p>
+          <p className="meal-item-price">${product.price}</p>
           <p className="meal-item-description">{product.description}</p>
         </div>
         <p className="meal-item-actions">
