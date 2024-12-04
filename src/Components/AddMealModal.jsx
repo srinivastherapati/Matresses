@@ -61,7 +61,7 @@ export default function AddMealModal({
       stock,
       price,
       category: category.toUpperCase(),
-      type,
+      type:type.toUpperCase(),
     };
 
     try {
@@ -165,10 +165,10 @@ export default function AddMealModal({
             value={type}
             onChange={(e) => setType(e.target.value)}
           >
-            <MenuItem value="Mattresses">Mattresses</MenuItem>
-            <MenuItem value="Bedroom utilities">Bedroom utilities</MenuItem>
-            <MenuItem value="Furniture">Furniture</MenuItem>
-            <MenuItem value="Other">Other</MenuItem>
+            <MenuItem value="Mattresses">MATRESSES</MenuItem>
+            <MenuItem value="Bedroom utilities">ACCESSORIES</MenuItem>
+            <MenuItem value="Furniture">FURNITURE</MenuItem>
+            <MenuItem value="Other">OTHER</MenuItem>
           </TextField>
           {error && <p style={{ color: "red" }}>{error}</p>}
           <Button

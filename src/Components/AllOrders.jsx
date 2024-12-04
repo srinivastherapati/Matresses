@@ -27,7 +27,7 @@ const styles = {
     borderCollapse: "collapse",
   },
   tableHeader: {
-    backgroundColor: "##2e2e2e",
+    backgroundColor: "#ff7058",
     color: "#fff",
     fontWeight: "bold",
   },
@@ -43,9 +43,7 @@ const statusOptions = [
   "PREPARING",
   "READY",
   "DELIVERED",
-  "CANCEL",
-  "Cancelled (By User)",
-  "Cancelled (By Admin)",
+ 
 ];
 
 const AllOrders = () => {
@@ -96,7 +94,7 @@ const AllOrders = () => {
   return (
     <Box style={styles.container}>
       <Typography variant="h4" gutterBottom>
-        All Orders
+        Total Orders
       </Typography>
       <TableContainer component={Paper} style={{ boxShadow: "none" }}>
         <Table>
@@ -125,30 +123,45 @@ const AllOrders = () => {
                   {new Date(order.orderDate).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
-                  <select
-                    value={order.status}
-                    onChange={(e) =>
-                      handleStatusChange(order.orderId, e.target.value)
-                    }
-                    disabled={
-                      order.status === "Cancelled (By User)" ||
-                      order.status === "Cancelled (By Admin)" ||
-                      order.status==="DELIVERED"
-                    }
-                    style={{
-                      backgroundColor: "#1d1a16",
-                      color: "#d9e2f1",
-                      border: "none",
-                      padding: "5px",
-                    }}
-                  >
-                    {statusOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </TableCell>
+  <select
+    value={order.status}
+    onChange={(e) =>
+      handleStatusChange(order.orderId, e.target.value)
+    }
+    disabled={
+      order.status === "Cancelled (By User)" ||
+      order.status === "Cancelled (By Admin)" ||
+      order.status === "DELIVERED"
+    }
+    style={{
+      backgroundColor: order.status === "DELIVERED" || order.status.includes("Cancelled")
+        ? "#f0f0f0"
+        : "lightGreen",
+      color: order.status === "DELIVERED" || order.status.includes("Cancelled")
+        ? "#999999"
+        : "#333333",
+      border: "1px solid #ccc",
+      borderRadius: "8px",
+      padding: "8px 12px",
+      fontSize: "14px",
+      width: "100%",
+      maxWidth: "200px",
+      appearance: "none", // Remove default browser styling
+      cursor: order.status === "DELIVERED" || order.status.includes("Cancelled")
+        ? "not-allowed"
+        : "pointer",
+      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+      transition: "all 0.3s ease",
+    }}
+  >
+    {statusOptions.map((option) => (
+      <option key={option} value={option}>
+        {option}
+      </option>
+    ))}
+  </select>
+</TableCell>
+
               </TableRow>
             )):  (
               <div style={{ display: "flex", width: "100%" }}>
