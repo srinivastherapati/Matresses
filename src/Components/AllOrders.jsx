@@ -40,8 +40,8 @@ const styles = {
 };
 
 const statusOptions = [
-  "PREPARING",
-  "READY",
+  "ORDER PLACED",
+  "SHIPPED",
   "DELIVERED",
  
 ];
