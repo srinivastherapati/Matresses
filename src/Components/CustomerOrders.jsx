@@ -105,7 +105,7 @@ const CustomerOrders = () => {
             key={value}
             onClick={() => handleRatingChange(productId, value)}
             size="small"
-            style={{ color: value <= currentRating ? "#FFD700" : "#ccc" }} // Gold for filled stars
+            style={{ color: value <= currentRating ? "#ff7058" : "#ccc" }} // Gold for filled stars
           >
             {value <= currentRating ? <Star /> : <StarBorder />}
           </IconButton>

@@ -9,11 +9,22 @@ import EditIcon from "@mui/icons-material/Edit";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
 import { deleteProduct } from "./ServerRequests";
 
-export default function MealItem({ product, isAdmin, onEdit }) {
+export default function MealItem({
+  product,
+  isAdmin,
+  onEdit,
+  isLoggedIn,
+  setCurrentPage,
+}) {
   const cartContxt = useContext(CartContext);
   const [quantity, setQuantity] = useState(product.stock);
 
   function handleAddMeal() {
+    if (!isLoggedIn) {
+      alert("Please login to continue");
+      setCurrentPage("product");
+      return;
+    }
     cartContxt.addItems({ ...product, quantity });
   }
 
@@ -56,15 +67,13 @@ export default function MealItem({ product, isAdmin, onEdit }) {
       <article>
         <img src={`${product.imageUrl}`} alt={product.name} />
         <div>
-          <h3>
-            {product.name}{" "}
-            <span>
-              <StarHalfIcon style={{ fontSize: "18px", color: "#ffc404" }} />{" "}
-              {product.rating}
-            </span>{" "}
-          </h3>
-          <p className="meal-item-price">${product.price}</p>
+          <h3>{product.name} </h3>
           <p className="meal-item-description">{product.description}</p>
+          <p>
+            <StarHalfIcon style={{ fontSize: "18px", color: "#ff7058" }} />{" "}
+            {product.rating}
+          </p>{" "}
+          <p className="meal-item-price">${product.price} </p>
         </div>
         <p className="meal-item-actions">
           {!isAdmin && <Buttons onClick={handleAddMeal}>Add to Cart</Buttons>}
