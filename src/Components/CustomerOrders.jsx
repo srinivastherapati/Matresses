@@ -2,16 +2,14 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  CircularProgress,
+  Card,
+  CardContent,
+  CardActions,
   IconButton,
   Collapse,
+  CircularProgress,
+  Button,
+  Grid,
 } from "@mui/material";
 import {
   KeyboardArrowDown,
@@ -24,15 +22,14 @@ import {
   getCustomerOrders,
   updateProductRating,
 } from "./ServerRequests.jsx";
-import "./CustomerOrders.css";
-import Buttons from "./UI/Buttons.jsx";
+import "./CustomerOrders.css"; // Update CSS for global styles.
 
 const CustomerOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [openRow, setOpenRow] = useState({});
-  const [ratings, setRatings] = useState({}); // Track product ratings.
+  const [ratings, setRatings] = useState({});
   const userData = JSON.parse(localStorage.getItem("userDetails"));
 
   useEffect(() => {
@@ -54,7 +51,6 @@ const CustomerOrders = () => {
   }, []);
 
   const handleRatingChange = (productId, rating) => {
-    console.log("Came Here " + productId);
     try {
       updateProductRating(userData.userId, productId, rating);
       alert("Rating updated successfully");
@@ -68,6 +64,27 @@ const CustomerOrders = () => {
     setOpenRow((prev) => ({ ...prev, [orderId]: !prev[orderId] }));
   };
 
+  const renderStars = (productId) => {
+    const currentRating = ratings[productId] || 0;
+    return (
+      <Box display="flex">
+        {[1, 2, 3, 4, 5].map((value) => (
+          <IconButton
+            key={value}
+            onClick={() => handleRatingChange(productId, value)}
+            size="small"
+            style={{
+              color: value <= currentRating ? "#ff7058" : "#ccc",
+              transition: "color 0.3s ease",
+            }}
+          >
+            {value <= currentRating ? <Star /> : <StarBorder />}
+          </IconButton>
+        ))}
+      </Box>
+    );
+  };
+
   if (loading) {
     return (
       <Box
@@ -75,8 +92,9 @@ const CustomerOrders = () => {
         justifyContent="center"
         alignItems="center"
         height="100vh"
+        bgcolor="#324a5e"
       >
-        <CircularProgress />
+        <CircularProgress style={{ color: "#ff7058" }} />
       </Box>
     );
   }
@@ -88,149 +106,122 @@ const CustomerOrders = () => {
         justifyContent="center"
         alignItems="center"
         height="100vh"
+        bgcolor="#324a5e"
       >
-        <Typography variant="h6" color="error">
+        <Typography variant="h6" color="#ff7058">
           {error}
         </Typography>
       </Box>
     );
   }
 
-  const renderStars = (productId) => {
-    const currentRating = ratings[productId] || 0;
-    return (
-      <Box>
-        {[1, 2, 3, 4, 5].map((value) => (
-          <IconButton
-            key={value}
-            onClick={() => handleRatingChange(productId, value)}
-            size="small"
-            style={{ color: value <= currentRating ? "#ff7058" : "#ccc" }} // Gold for filled stars
-          >
-            {value <= currentRating ? <Star /> : <StarBorder />}
-          </IconButton>
-        ))}
-      </Box>
-    );
-  };
-
-  const renderTable = (orders, title) => {
-    return (
-      <>
-        <Typography variant="h5" gutterBottom>
-          {title}
-        </Typography>
-        {orders ? (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell />
-                  <TableCell>Order ID</TableCell>
-                  <TableCell>Order Date</TableCell>
-                  <TableCell>Total Amount</TableCell>
-                  <TableCell>Order Status</TableCell>
-                  <TableCell>Cancel Order</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {orders.map((order) => (
-                  <React.Fragment key={order.orderId}>
-                    <TableRow>
-                      <TableCell>
-                        <IconButton
-                          size="small"
-                          onClick={() => toggleRow(order.orderId)}
-                        >
-                          {openRow[order.orderId] ? (
-                            <KeyboardArrowUp />
-                          ) : (
-                            <KeyboardArrowDown />
-                          )}
-                        </IconButton>
-                      </TableCell>
-                      <TableCell>{order.orderId}</TableCell>
-                      <TableCell>
-                        {new Date(order.orderDate).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>${order.totalPayment.toFixed(2)}</TableCell>
-                      <TableCell>{order.status}</TableCell>
-                      <TableCell>
-                        {order.status === "PLACED" ||
-                        order.status === "READY" ||
-                        order.status === "PREPARING" ? (
-                          <Buttons
-                            onClick={() => handleCancelOrder(order.orderId)}
-                          >
-                            Cancel
-                          </Buttons>
-                        ) : (
-                          "Cancel"
-                        )}
-                      </TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                      <TableCell
-                        style={{ paddingBottom: 0, paddingTop: 0 }}
-                        colSpan={6}
-                      >
-                        <Collapse
-                          in={openRow[order.orderId]}
-                          timeout="auto"
-                          unmountOnExit
-                        >
-                          <Box margin={2}>
-                            <Typography variant="subtitle1" gutterBottom>
-                              Order Items
-                            </Typography>
-                            <Table size="small" aria-label="order items">
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell>Product Name</TableCell>
-                                  <TableCell>Quantity Bought</TableCell>
-                                  <TableCell>Rate Product</TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {order.products.map((product, index) => (
-                                  <TableRow key={index}>
-                                    <TableCell>{product.name}</TableCell>
-                                    <TableCell>
-                                      {product.quantityBought}
-                                    </TableCell>
-                                    <TableCell>
-                                      {renderStars(product.productId)}
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </Box>
-                        </Collapse>
-                      </TableCell>
-                    </TableRow>
-                  </React.Fragment>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        ) : (
-          <div style={{ display: "flex", width: "100%" }}>
-            <p
+  return (
+    <Box padding={3} bgcolor="#f5f7fa" minHeight="100vh">
+      <Typography
+        variant="h4"
+        gutterBottom
+        style={{ color: "#324a5e", fontWeight: "bold", textAlign: "center" }}
+      >
+        Your Orders
+      </Typography>
+      <Grid container spacing={3}>
+        {orders.map((order) => (
+          <Grid item xs={12} sm={6} md={4} key={order.orderId}>
+            <Card
               style={{
-                justifyContent: "space-around",
+                borderRadius: "10px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.2s ease",
               }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.transform = "scale(1.02)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.transform = "scale(1)")
+              }
             >
-              No Orders at this time
-            </p>
-          </div>
-        )}
-      </>
-    );
-  };
-
-  return renderTable(orders, "Your Orders");
+              <CardContent
+                style={{ backgroundColor: "#324a5e", color: "#fff" }}
+              >
+                <Typography variant="h6">Order ID: {order.orderId}</Typography>
+                <Typography variant="body2" style={{ color: "#c0d3e0" }}>
+                  Date: {new Date(order.orderDate).toLocaleDateString()}
+                </Typography>
+                <Typography variant="body1">
+                  Amount: ${order.totalPayment.toFixed(2)}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  style={{
+                    color: order.status === "CANCELLED" ? "#ff7058" : "#c0d3e0",
+                  }}
+                >
+                  Status: {order.status}
+                </Typography>
+              </CardContent>
+              <CardActions
+                style={{ justifyContent: "space-between", padding: "8px 16px" }}
+              >
+                {order.status !== "CANCELLED" && (
+                  <Button
+                    variant="contained"
+                    style={{
+                      backgroundColor: "#ff7058",
+                      color: "#fff",
+                      textTransform: "none",
+                      fontWeight: "bold",
+                    }}
+                    onClick={() => handleCancelOrder(order.orderId)}
+                  >
+                    Cancel Order
+                  </Button>
+                )}
+                <IconButton
+                  onClick={() => toggleRow(order.orderId)}
+                  style={{ color: "#ff7058" }}
+                >
+                  {openRow[order.orderId] ? (
+                    <KeyboardArrowUp />
+                  ) : (
+                    <KeyboardArrowDown />
+                  )}
+                </IconButton>
+              </CardActions>
+              <Collapse
+                in={openRow[order.orderId]}
+                timeout="auto"
+                unmountOnExit
+              >
+                <Box padding={2} bgcolor="#f7f9fc">
+                  <Typography variant="subtitle1" style={{ color: "#324a5e" }}>
+                    Order Items:
+                  </Typography>
+                  {order.products.map((product) => (
+                    <Box
+                      key={product.productId}
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      my={1}
+                      style={{
+                        borderBottom: "1px solid #ccc",
+                        paddingBottom: "8px",
+                      }}
+                    >
+                      <Typography style={{ color: "#324a5e" }}>
+                        {product.name}
+                      </Typography>
+                      {renderStars(product.productId)}
+                    </Box>
+                  ))}
+                </Box>
+              </Collapse>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
 };
 
 export default CustomerOrders;
