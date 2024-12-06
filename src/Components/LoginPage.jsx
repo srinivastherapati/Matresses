@@ -23,7 +23,7 @@ function LoginPage({ setLoggedIn, setUserData }) {
     e.preventDefault();
     try {
       const userData = await loginUser({ email, password });
-      userData.role = "admin";
+     
       localStorage.setItem("loggedIn", "true");
       localStorage.setItem("userDetails", JSON.stringify(userData));
       console.log(userData);
