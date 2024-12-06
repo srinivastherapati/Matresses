@@ -97,13 +97,15 @@ export default function Meals({ isAdmin, isLoggedIn, setCurrentPage }) {
     // Apply category filter
     if (categories.length) {
       filtered = filtered.filter((product) =>
-        categories.includes(product.category)
+        categories.includes(product.productVariant.size.toLowerCase())
       );
     }
 
     // Apply type filter
     if (types.length) {
-      filtered = filtered.filter((product) => types.includes(product.type));
+      filtered = filtered.filter((product) =>
+        types.toLowerCase().includes(product.productVariant.type.toLowerCase())
+      );
     }
 
     // Apply sorting
@@ -141,13 +143,12 @@ export default function Meals({ isAdmin, isLoggedIn, setCurrentPage }) {
       description: "",
       price: "",
       productVariants: {
-        size: "queen",    
-        color: "",     
-        dimensions: "",  
-        type: "Mattresses",   
+        size: "queen",
+        color: "",
+        dimensions: "",
+        type: "Mattresses",
       },
-    }
-  );
+    });
     setIsAdd(true);
     setShowAddModal(true);
   };
