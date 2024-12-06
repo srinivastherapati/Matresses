@@ -35,7 +35,7 @@ const styles = {
     backgroundColor: "black",
     color: "black",
     border: "none",
-    fontsize:"15px"
+    fontsize: "15px",
   },
 };
 
@@ -43,7 +43,7 @@ const statusOptions = [
   "PREPARING",
   "READY",
   "DELIVERED",
-  "CANCEL",
+  "CANCELLED",
   "Cancelled (By User)",
   "Cancelled (By Admin)",
 ];
@@ -76,7 +76,6 @@ const AllOrders = () => {
       .catch((error) => console.error("Failed to fetch orders:", error));
   }, []);
 
-
   if (isLoading) {
     return (
       <Box
@@ -102,7 +101,7 @@ const AllOrders = () => {
         <Table>
           <TableHead>
             <TableRow>
-            <TableCell style={styles.tableHeader}>Products</TableCell>
+              <TableCell style={styles.tableHeader}>Products</TableCell>
               <TableCell style={styles.tableHeader}>Order ID</TableCell>
               <TableCell style={styles.tableHeader}>Customer Name</TableCell>
               <TableCell style={styles.tableHeader}>Customer Email</TableCell>
@@ -124,10 +123,10 @@ const AllOrders = () => {
                     ? "READY FOR PICKUP"
                     : option
                 );
-  
+
                 return (
                   <TableRow key={order.orderId}>
-                     <TableCell>
+                    <TableCell>
                       <select
                         style={{
                           backgroundColor: "#f5f5f5",
@@ -138,10 +137,7 @@ const AllOrders = () => {
                         }}
                       >
                         {order.products.map((product) => (
-                          <option
-                            key={product.name}
-                            value={product.name}
-                          >
+                          <option key={product.name} value={product.name}>
                             {`${product.name} (Qty: ${product.quantityBought})`}
                           </option>
                         ))}
@@ -197,6 +193,6 @@ const AllOrders = () => {
       </TableContainer>
     </Box>
   );
-}  
+};
 
 export default AllOrders;
