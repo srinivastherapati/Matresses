@@ -140,9 +140,14 @@ export default function Meals({ isAdmin, isLoggedIn, setCurrentPage }) {
       stock: 1,
       description: "",
       price: "",
-      category: "",
-      type: "",
-    });
+      productVariants: {
+        size: "queen",    
+        color: "",     
+        dimensions: "",  
+        type: "Mattresses",   
+      },
+    }
+  );
     setIsAdd(true);
     setShowAddModal(true);
   };

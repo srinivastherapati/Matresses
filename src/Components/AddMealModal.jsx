@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Modal,
   Box,
@@ -7,7 +7,7 @@ import {
   Typography,
   MenuItem,
 } from "@mui/material";
-import { addProduct, updateProduct } from "./ServerRequests";
+import { addProduct,updateProduct } from "./ServerRequests";
 
 const modalStyle = {
   position: "absolute",
@@ -24,53 +24,53 @@ const modalStyle = {
 export default function AddMealModal({
   open,
   onClose,
-  onAddSuccess,
   currentProduct,
   isAdd,
 }) {
-  const [name, setName] = useState(currentProduct.name);
-  const [imageUrl, setImageUrl] = useState(currentProduct.imageUrl);
-  const [description, setDescription] = useState(currentProduct.description);
-  const [stock, setStock] = useState(1);
-  const [price, setPrice] = useState(currentProduct.price);
-  const [category, setCategory] = useState("queen");
-  const [type, setType] = useState("Mattresses");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [name, setName] = useState(currentProduct?.name || "");
+  const [imageUrl, setImageUrl] = useState(currentProduct?.imageUrl || "");
+  const [description, setDescription] = useState(currentProduct?.description || "");
+  const [stock, setStock] = useState(currentProduct?.stock || 1);
+  const [price, setPrice] = useState(currentProduct?.price || 0);
+  const [productVariants, setVariants] = useState({
+    size: currentProduct?.productVariants?.size || "",
+    color: currentProduct?.productVariants?.color || "",
+    dimensions: currentProduct?.productVariants?.dimensions || "",
+    type: currentProduct?.productVariants?.type || "",
+  });
 
-  useEffect(() => {
-    if (currentProduct) {
-      setName(currentProduct.name);
-      setImageUrl(currentProduct.imageUrl);
-      setDescription(currentProduct.description);
-      setPrice(currentProduct.price);
-      setStock(currentProduct.stock || 1);
-      setCategory(currentProduct.category || "queen");
-      setType(currentProduct.type || "Mattresses");
-    }
-  }, [currentProduct]);
+  const handleVariantChange = (key, value) => {
+    setVariants((prev) => ({ ...prev, [key]: value }));
+  };
 
   const handleSubmit = async () => {
+    const variantsArray = [
+      {
+        size: productVariants.size,
+        color: productVariants.color,
+        type: productVariants.type,
+        dimension: productVariants.dimensions, // Map dimensions to dimension
+      },
+    ];
     const productData = {
       name,
       imageUrl,
       description,
-      stock,
       price,
-      category: category.toUpperCase(),
-      type: type.toUpperCase(),
+      stock,
+      productVariants: variantsArray,
     };
+    
 
     try {
-      setIsLoading(true);
-      setError(null);
-
       if (!isAdd) {
         const response = await updateProduct(currentProduct.id, productData);
         if (response) {
           alert("Updated Product Successfully!");
           window.location.reload();
         }
+
+        alert("Product updated successfully!");
       } else {
         const response = await addProduct(productData);
         if (response) {
@@ -80,10 +80,7 @@ export default function AddMealModal({
       }
       onClose();
     } catch (err) {
-      setError(err.message);
       alert("Failed to submit product: " + err.message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -91,12 +88,12 @@ export default function AddMealModal({
     <Modal
       open={open}
       onClose={onClose}
-      aria-labelledby="add-meal-modal-title"
-      aria-describedby="add-meal-modal-description"
+      aria-labelledby="add-product-modal-title"
+      aria-describedby="add-product-modal-description"
     >
       <Box sx={modalStyle}>
-        <Typography id="add-meal-modal-title" variant="h6" component="h2">
-          {!isAdd ? "Edit Item" : "Add New Item"}
+        <Typography id="add-product-modal-title" variant="h6" component="h2">
+          {!isAdd ? "Edit Product" : "Add New Product"}
         </Typography>
         <form>
           <TextField
@@ -141,44 +138,50 @@ export default function AddMealModal({
             onChange={(e) => setStock(Math.max(1, e.target.value))}
             required
           />
+
+          <Typography variant="subtitle1" sx={{ marginTop: 2 }}>
+            Product Variants
+          </Typography>
           <TextField
-            select
-            label="Category"
+            label="Size"
             fullWidth
             margin="normal"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <MenuItem value="queen">QUEEN</MenuItem>
-            <MenuItem value="king">KING</MenuItem>
-            <MenuItem value="full">FULL</MenuItem>
-            <MenuItem value="twin">TWIN</MenuItem>
-          </TextField>
+            value={productVariants.size}
+            onChange={(e) => handleVariantChange("size", e.target.value)}
+          />
           <TextField
-            select
+            label="Color"
+            fullWidth
+            margin="normal"
+            value={productVariants.color}
+            onChange={(e) => handleVariantChange("color", e.target.value)}
+          />
+          <TextField
+            label="Dimensions"
+            fullWidth
+            margin="normal"
+            value={productVariants.dimensions}
+            onChange={(e) => handleVariantChange("dimensions", e.target.value)}
+          />
+          <TextField
             label="Type"
             fullWidth
             margin="normal"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-          >
-            <MenuItem value="Mattresses">MATRESSES</MenuItem>
-            <MenuItem value="Bedroom utilities">ACCESSORIES</MenuItem>
-            <MenuItem value="Furniture">FURNITURE</MenuItem>
-            <MenuItem value="Other">OTHER</MenuItem>
-          </TextField>
-          {error && <p style={{ color: "red" }}>{error}</p>}
+            value={productVariants.type}
+            onChange={(e) => handleVariantChange("type", e.target.value)}
+          />
+
           <Button
             variant="contained"
             color="primary"
-            disabled={isLoading}
             sx={{ marginTop: "20px" }}
             onClick={handleSubmit}
           >
-            {isLoading ? "Processing..." : !isAdd ? "Update Item" : "Add Item"}
+            {!isAdd ? "Update Product" : "Add Product"}
           </Button>
         </form>
       </Box>
     </Modal>
   );
 }
+

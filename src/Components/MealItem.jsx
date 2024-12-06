@@ -77,7 +77,12 @@ export default function MealItem({
           <p className="meal-item-price">${product.price} </p>
         </div>
         <p className="meal-item-actions">
-          {!isAdmin && <Buttons onClick={handleAddMeal}>+ Add to Cart</Buttons>}
+          {!isAdmin && <Buttons
+    onClick={product.stock > 0 ? handleAddMeal : null}
+    disabled={product.stock <= 0}
+  >
+    {product.stock <= 0 ? "Out of Stock" : "+ Add to Cart"}
+  </Buttons>}
           {isAdmin && (
             <div className="admin-actions">
               <EditIcon

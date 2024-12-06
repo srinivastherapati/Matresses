@@ -16,6 +16,9 @@ export default function Checkout() {
   const [isOrderPlaced, setIsOrderPlaced] = useState(false); // Track if the order is placed successfully.
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [cardNumber,setCardNumber]=useState("");
+  const [deliveryOption, setDeliveryOption] = useState("");
+  const [useShippingAddress, setUseShippingAddress] = useState(false);
 
   const cartTotal = crtCntxt.items.reduce((totalPrice, item) => {
     return totalPrice + item.quantity * item.price;
@@ -24,6 +27,16 @@ export default function Checkout() {
   function handleHideCheckout() {
     userPrgrs.hideCheckout();
   }
+  const handleChange = (e) => {
+    const value = e.target.value;
+
+    if (/^\d*$/.test(value) && value.length <= 16) {
+      setCardNumber(value);
+      setError("");
+    } else {
+      setError("Card Number must contain only up to 16 digits.");
+    }
+  };
 
   function handleFinish() {
     setIsOrderPlaced(false); // Reset state for future use.
@@ -90,6 +103,14 @@ export default function Checkout() {
       </Modal>
     );
   }
+  const handleDeliveryOptionChange = (e) => {
+    setDeliveryOption(e.target.value);
+    setUseShippingAddress(false); // Reset checkbox selection when delivery option changes
+  };
+
+  const handleCheckboxChange = (e) => {
+    setUseShippingAddress(e.target.checked);
+  };
 
   if (error) {
     return <ErrorPage title="Failed to place order" message={error} />;
@@ -107,11 +128,80 @@ export default function Checkout() {
           <Input id="city" type="text" label="City" />
           <Input id="postal-code" type="text" label="Postal Code" />
         </div>
+        <p>Delivery Options</p>
+        <div className="control-row">
+          <label>
+            <input
+              type="radio"
+              name="deliveryOption"
+              value="pickup"
+              onChange={handleDeliveryOptionChange}
+              required
+            />
+            Pickup (everyDay 10am-10pm)
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="deliveryOption"
+              value="delivery"
+              onChange={handleDeliveryOptionChange}
+              required
+            />
+            Delivery
+          </label>
+        </div>
+
+        {/* Conditional Address Options for Delivery */}
+        {deliveryOption === "delivery" && (
+          <div>
+            <p>Address Options</p>
+            <label>
+              <input
+                type="checkbox"
+                checked={useShippingAddress}
+                onChange={handleCheckboxChange}
+              />
+              Same as Shipping Address
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={!useShippingAddress}
+                onChange={() => setUseShippingAddress(false)}
+              />
+              Add New Address
+            </label>
+            {!useShippingAddress && (
+              <div>
+                <Input id="new-street" type="text" label="Street" />
+                <div className="control-row">
+                  <Input id="new-city" type="text" label="City" />
+                  <Input id="new-state" type="text" label="State" />
+                  <Input id="new-zip" type="text" label="Zip Code" />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         <p>Card Details</p>
-        <Input id="Card Number" type="text" label="Card Number" />
+        <Input
+        id="cardNumber"
+        type="text"
+        value={cardNumber}
+        onChange={handleChange}
+        placeholder="Enter your card number"
+      />
         <Input id="Name on Card" type="text" label="Name On Card" />
-        <Input id="CVV" type="text" label="CVV" />
-        <Input id="expiry" type="text" label="Expiry" />
+        <Input id="CVV" type="text" label="CVV" maxLength={3} />
+        <Input 
+    id="expiry" 
+    type="text" 
+    label="Expiry" 
+    placeholder="MM/YYYY" 
+    pattern="(0[1-9]|1[0-2])\/\d{4}" 
+    title="Enter expiry date in MM/YYYY format" 
+/>
         <p className="modal-actions">{actions}</p>
       </form>
     </Modal>
