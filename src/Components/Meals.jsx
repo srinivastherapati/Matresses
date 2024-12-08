@@ -56,9 +56,11 @@ export default function Meals({ isAdmin, isLoggedIn, setCurrentPage }) {
   };
 
   const handleCategoryChange = (category) => {
-    const updatedCategories = selectedCategories.includes(category)
-      ? selectedCategories.filter((cat) => cat !== category)
-      : [...selectedCategories, category];
+    const updatedCategories = selectedCategories.includes(
+      category.toLowerCase()
+    )
+      ? selectedCategories.filter((cat) => cat !== category.toLowerCase())
+      : [...selectedCategories, category.toLowerCase()];
     setSelectedCategories(updatedCategories);
     updateFilteredProducts(
       searchQuery,
@@ -69,9 +71,9 @@ export default function Meals({ isAdmin, isLoggedIn, setCurrentPage }) {
   };
 
   const handleTypeChange = (type) => {
-    const updatedTypes = selectedTypes.includes(type)
-      ? selectedTypes.filter((t) => t !== type)
-      : [...selectedTypes, type];
+    const updatedTypes = selectedTypes.includes(type.toLowerCase())
+      ? selectedTypes.filter((t) => t !== type.toLowerCase())
+      : [...selectedTypes, type.toLowerCase()];
     setSelectedTypes(updatedTypes);
     updateFilteredProducts(
       searchQuery,
@@ -95,16 +97,24 @@ export default function Meals({ isAdmin, isLoggedIn, setCurrentPage }) {
     }
 
     // Apply category filter
+    console.log(filtered);
+    console.log(categories);
     if (categories.length) {
-      filtered = filtered.filter((product) =>
-        categories.includes(product.productVariant.size.toLowerCase())
+      filtered = filtered.filter(
+        (product) =>
+          product.productVariants[0] &&
+          product.productVariants[0].size &&
+          categories.includes(product.productVariants[0].size.toLowerCase())
       );
     }
 
     // Apply type filter
     if (types.length) {
-      filtered = filtered.filter((product) =>
-        types.toLowerCase().includes(product.productVariant.type.toLowerCase())
+      filtered = filtered.filter(
+        (product) =>
+          product.productVariants[0] &&
+          product.productVariants[0].type &&
+          types.includes(product.productVariants[0].type.toLowerCase())
       );
     }
 
@@ -217,7 +227,7 @@ export default function Meals({ isAdmin, isLoggedIn, setCurrentPage }) {
               key={category}
               control={
                 <Checkbox
-                  checked={selectedCategories.includes(category)}
+                  checked={selectedCategories.includes(category.toLowerCase())}
                   onChange={() => handleCategoryChange(category)}
                 />
               }
@@ -232,7 +242,7 @@ export default function Meals({ isAdmin, isLoggedIn, setCurrentPage }) {
               key={type}
               control={
                 <Checkbox
-                  checked={selectedTypes.includes(type)}
+                  checked={selectedTypes.includes(type.toLowerCase())}
                   onChange={() => handleTypeChange(type)}
                 />
               }

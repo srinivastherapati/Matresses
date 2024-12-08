@@ -13,10 +13,13 @@ export default function Checkout() {
   const userPrgrs = useContext(UserProgressContext);
   const userId = JSON.parse(localStorage.getItem("userDetails")).userId;
 
-  const [isOrderPlaced, setIsOrderPlaced] = useState(false); // Track if the order is placed successfully.
+  const [isOrderPlaced, setIsOrderPlaced] = useState({
+    placed: false,
+    message: "",
+  }); // Track if the order is placed successfully.
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [cardNumber,setCardNumber]=useState("");
+  const [cardNumber, setCardNumber] = useState("");
   const [deliveryOption, setDeliveryOption] = useState("");
   const [useShippingAddress, setUseShippingAddress] = useState(false);
 
@@ -39,7 +42,7 @@ export default function Checkout() {
   };
 
   function handleFinish() {
-    setIsOrderPlaced(false); // Reset state for future use.
+    setIsOrderPlaced({ status: false, message: "" }); // Reset state for future use.
     userPrgrs.hideCheckout();
     crtCntxt.clearCart();
   }
@@ -69,7 +72,7 @@ export default function Checkout() {
       );
 
       if (response.status === 200 || response.status === 201) {
-        setIsOrderPlaced(true); // Show success modal.
+        setIsOrderPlaced({ status: true, message: response.message }); // Show success modal.
       }
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong!");
@@ -91,12 +94,17 @@ export default function Checkout() {
     actions = <span>Placing your order...</span>;
   }
 
-  if (isOrderPlaced) {
+  if (isOrderPlaced.status) {
     return (
       <Modal open={userPrgrs.progress === "checkout"}>
         <h2>Success!</h2>
         <p>Your Order Placed Successfully</p>
         <p>We will get back to you with more details via email.</p>
+        {isOrderPlaced.message.trim().length != 0 ? (
+          <p>isOrderPlaced.message</p>
+        ) : (
+          <></>
+        )}
         <p className="modal-actions">
           <Buttons onClick={handleFinish}>Okay</Buttons>
         </p>
@@ -186,22 +194,22 @@ export default function Checkout() {
         )}
         <p>Card Details</p>
         <Input
-        id="cardNumber"
-        type="text"
-        value={cardNumber}
-        onChange={handleChange}
-        placeholder="Enter your card number"
-      />
+          id="cardNumber"
+          type="text"
+          value={cardNumber}
+          onChange={handleChange}
+          placeholder="Enter your card number"
+        />
         <Input id="Name on Card" type="text" label="Name On Card" />
         <Input id="CVV" type="text" label="CVV" maxLength={3} />
-        <Input 
-    id="expiry" 
-    type="text" 
-    label="Expiry" 
-    placeholder="MM/YYYY" 
-    pattern="(0[1-9]|1[0-2])\/\d{4}" 
-    title="Enter expiry date in MM/YYYY format" 
-/>
+        <Input
+          id="expiry"
+          type="text"
+          label="Expiry"
+          placeholder="MM/YYYY"
+          pattern="(0[1-9]|1[0-2])\/\d{4}"
+          title="Enter expiry date in MM/YYYY format"
+        />
         <p className="modal-actions">{actions}</p>
       </form>
     </Modal>

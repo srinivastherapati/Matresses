@@ -14,6 +14,7 @@ function LoginPage({ setLoggedIn, setUserData }) {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
 
   const togglePage = () => {
     setIsLogin(!isLogin);
@@ -23,10 +24,8 @@ function LoginPage({ setLoggedIn, setUserData }) {
     e.preventDefault();
     try {
       const userData = await loginUser({ email, password });
-     
       localStorage.setItem("loggedIn", "true");
       localStorage.setItem("userDetails", JSON.stringify(userData));
-      console.log(userData);
       setUserData(userData);
       setLoggedIn(true);
       window.location.reload();
@@ -37,10 +36,24 @@ function LoginPage({ setLoggedIn, setUserData }) {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const isValidPhoneNumber = /^\d{10}$/.test(phoneNumber);
+
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
+
+    if (!isValidEmail) {
+      alert("Invalid email format!");
+      return;
+    }
+
+    if (!isValidPhoneNumber) {
+      alert("Invalid phone number! It must be 10 digits.");
+      return;
+    }
+
     try {
       const newUser = {
         firstName,
@@ -48,9 +61,9 @@ function LoginPage({ setLoggedIn, setUserData }) {
         email,
         password,
         phoneNumber,
+        dateOfBirth,
         address: [`${street}, ${city}, ${state}, ${zip}`],
       };
-      console.log("Signup Payload:", newUser);
       await registerUser(newUser);
       alert("Signup successful! Please log in.");
       setIsLogin(true);
@@ -84,7 +97,6 @@ function LoginPage({ setLoggedIn, setUserData }) {
         },
       }}
     >
-      {/* Quote Section */}
       <Box
         sx={{
           zIndex: 2,
@@ -105,8 +117,6 @@ function LoginPage({ setLoggedIn, setUserData }) {
           quality and design tailored just for you.
         </Typography>
       </Box>
-
-      {/* Login/Signup Box */}
       <Paper
         elevation={5}
         sx={{
@@ -147,6 +157,16 @@ function LoginPage({ setLoggedIn, setUserData }) {
                 margin="normal"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+              />
+              <TextField
+                label="Date of Birth"
+                type="date"
+                fullWidth
+                margin="normal"
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+                InputLabelProps={{ shrink: true }}
                 required
               />
               <Typography variant="subtitle1" sx={{ textAlign: "left", mt: 2 }}>
@@ -228,9 +248,7 @@ function LoginPage({ setLoggedIn, setUserData }) {
           onClick={togglePage}
           sx={{ color: "#ff7058", textTransform: "none" }}
         >
-          {isLogin
-            ? "New here? Sign Up"
-            : "Already have an account? Login"}
+          {isLogin ? "New here? Sign Up" : "Already have an account? Login"}
         </Button>
       </Paper>
     </Box>

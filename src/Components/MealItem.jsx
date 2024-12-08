@@ -64,7 +64,10 @@ export default function MealItem({
   }
 
   return (
-    <li className="meal-item">
+    <li
+      className="meal-item"
+      style={{ disabled: !isAdmin && product.stock == 0 }}
+    >
       <article>
         <img src={`${product.imageUrl}`} alt={product.name} />
         <div>
@@ -77,12 +80,14 @@ export default function MealItem({
           <p className="meal-item-price">${product.price} </p>
         </div>
         <p className="meal-item-actions">
-          {!isAdmin && <Buttons
-    onClick={product.stock > 0 ? handleAddMeal : null}
-    disabled={product.stock <= 0}
-  >
-    {product.stock <= 0 ? "Out of Stock" : "+ Add to Cart"}
-  </Buttons>}
+          {!isAdmin && (
+            <Buttons
+              onClick={product.stock > 0 ? handleAddMeal : null}
+              disabled={product.stock <= 0}
+            >
+              {product.stock <= 0 ? "Out of Stock" : "+ Add to Cart"}
+            </Buttons>
+          )}
           {isAdmin && (
             <div className="admin-actions">
               <EditIcon
