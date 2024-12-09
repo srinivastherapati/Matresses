@@ -58,6 +58,7 @@ export default function MealItem({
             </p>{" "}
             <div className="price-and-options">
               <p className="meal-item-price">${product.price}</p>
+              {isAdmin && <p className=" ">Stock {product.stock}</p>}
               {!isAdmin && 
               <>
               <select
@@ -65,11 +66,11 @@ export default function MealItem({
                 onChange={(e) => setSelectedSize(e.target.value)}
                 className="dropdown"
               >
-                <option value="">Select Dimension</option>
-                <option value="Twin">Twin</option>
-                <option value="Full">Full</option>
-                <option value="Queen">Queen</option>
-                <option value="King">King</option>
+                <option value="">Select type</option>
+                <option value="Twin">Spring</option>
+                <option value="Full">Foam</option>
+                <option value="Queen">Latex</option>
+                <option value="King">Hybrid</option>
               </select>
               <select
                 value={selectedDimension}
