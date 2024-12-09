@@ -116,7 +116,8 @@ export const deleteProduct = async (productId) => {
 
 export const addProduct = async (product) => {
   try {
-    product.productVariants[0]["productName"] = product.name;
+    product.productVariants[0]["productName"] =
+      product.name + " " + product.size;
     const response = await axios.post(`${API_BASE_URL}/products/add`, product);
     return response; // Return the response data if needed
   } catch (error) {
