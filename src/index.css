@@ -282,3 +282,7 @@ h1 {
     transform: translateY(0);
   }
 }
+.price-and-options {
+  display: flex;
+  justify-content: space-around;
+}

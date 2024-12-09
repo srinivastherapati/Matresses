@@ -139,10 +139,10 @@ export default function AddMealModal({
           </Typography>
           <TextField
             select
-            label="Size"
+            label="Dimensions"
             fullWidth
             margin="normal"
-            value={productVariants.size}
+            value={productVariants.size.toLowerCase()}
             onChange={(e) => handleVariantChange("size", e.target.value)}
             required
           >
@@ -153,10 +153,10 @@ export default function AddMealModal({
           </TextField>
           <TextField
             select
-            label="Dimensions"
+            label="Size"
             fullWidth
             margin="normal"
-            value={productVariants.dimensions}
+            value={productVariants.dimensions.toLowerCase()}
             onChange={(e) => handleVariantChange("dimensions", e.target.value)}
             required
           >
