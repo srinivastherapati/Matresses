@@ -21,15 +21,12 @@ const modalStyle = {
   p: 4,
 };
 
-export default function AddMealModal({
-  open,
-  onClose,
-  currentProduct,
-  isAdd,
-}) {
+export default function AddMealModal({ open, onClose, currentProduct, isAdd }) {
   const [name, setName] = useState(currentProduct?.name || "");
   const [imageUrl, setImageUrl] = useState(currentProduct?.imageUrl || "");
-  const [description, setDescription] = useState(currentProduct?.description || "");
+  const [description, setDescription] = useState(
+    currentProduct?.description || ""
+  );
   const [stock, setStock] = useState(currentProduct?.stock || 1);
   const [price, setPrice] = useState(currentProduct?.price || 0);
   const [productVariants, setVariants] = useState({
