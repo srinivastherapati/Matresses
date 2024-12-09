@@ -7,7 +7,7 @@ import {
   Typography,
   MenuItem,
 } from "@mui/material";
-import { addProduct,updateProduct } from "./ServerRequests";
+import { addProduct, updateProduct } from "./ServerRequests";
 
 const modalStyle = {
   position: "absolute",
@@ -34,7 +34,6 @@ export default function AddMealModal({
   const [price, setPrice] = useState(currentProduct?.price || 0);
   const [productVariants, setVariants] = useState({
     size: currentProduct?.productVariants?.size || "",
-    color: currentProduct?.productVariants?.color || "",
     dimensions: currentProduct?.productVariants?.dimensions || "",
     type: currentProduct?.productVariants?.type || "",
   });
@@ -47,7 +46,6 @@ export default function AddMealModal({
     const variantsArray = [
       {
         size: productVariants.size,
-        color: productVariants.color,
         type: productVariants.type,
         dimension: productVariants.dimensions, // Map dimensions to dimension
       },
@@ -60,7 +58,6 @@ export default function AddMealModal({
       stock,
       productVariants: variantsArray,
     };
-    
 
     try {
       if (!isAdd) {
@@ -69,8 +66,6 @@ export default function AddMealModal({
           alert("Updated Product Successfully!");
           window.location.reload();
         }
-
-        alert("Product updated successfully!");
       } else {
         const response = await addProduct(productData);
         if (response) {
@@ -143,33 +138,46 @@ export default function AddMealModal({
             Product Variants
           </Typography>
           <TextField
+            select
             label="Size"
             fullWidth
             margin="normal"
             value={productVariants.size}
             onChange={(e) => handleVariantChange("size", e.target.value)}
-          />
+            required
+          >
+            <MenuItem value="twin">Twin</MenuItem>
+            <MenuItem value="queen">Queen</MenuItem>
+            <MenuItem value="full">Full</MenuItem>
+            <MenuItem value="king">King</MenuItem>
+          </TextField>
           <TextField
-            label="Color"
-            fullWidth
-            margin="normal"
-            value={productVariants.color}
-            onChange={(e) => handleVariantChange("color", e.target.value)}
-          />
-          <TextField
+            select
             label="Dimensions"
             fullWidth
             margin="normal"
             value={productVariants.dimensions}
             onChange={(e) => handleVariantChange("dimensions", e.target.value)}
-          />
+            required
+          >
+            <MenuItem value="8inch">8 Inch</MenuItem>
+            <MenuItem value="10inch">10 Inch</MenuItem>
+            <MenuItem value="12inch">12 Inch</MenuItem>
+          </TextField>
           <TextField
+            select
             label="Type"
             fullWidth
             margin="normal"
             value={productVariants.type}
             onChange={(e) => handleVariantChange("type", e.target.value)}
-          />
+            required
+          >
+            <MenuItem value="mattresses">Mattresses</MenuItem>
+            <MenuItem value="furniture">Furniture</MenuItem>
+            <MenuItem value="accessories">Accessories</MenuItem>
+            <MenuItem value="other">Other</MenuItem>
+          </TextField>
 
           <Button
             variant="contained"
@@ -184,4 +192,3 @@ export default function AddMealModal({
     </Modal>
   );
 }
-
