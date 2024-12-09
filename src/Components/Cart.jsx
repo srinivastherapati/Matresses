@@ -33,6 +33,8 @@ export default function Cart(){
         name={item.name}
          quantity={item.quantity}
           price={item.price}
+          size = {item.size}
+          dimension = {item.dimension}
        onDecrease={()=>crtCntxt.removeItem(item.id)}
        onIncrease={()=>crtCntxt.addItems(item)} />
        )

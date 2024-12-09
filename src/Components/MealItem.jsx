@@ -3,8 +3,6 @@ import Buttons from "./UI/Buttons";
 import CartContext from "./Store/CartContext";
 
 import ClearIcon from "@mui/icons-material/Clear";
-import RemoveIcon from "@mui/icons-material/Remove";
-import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
 import { deleteProduct } from "./ServerRequests";
@@ -18,6 +16,8 @@ export default function MealItem({
 }) {
   const cartContxt = useContext(CartContext);
   const [quantity, setQuantity] = useState(product.stock);
+  const [selectedSize, setSelectedSize] = useState(""); // Manage selected size
+  const [selectedDimension, setSelectedDimension] = useState(""); // Manage selected dimension
 
   function handleAddMeal() {
     if (!isLoggedIn) {
@@ -25,7 +25,9 @@ export default function MealItem({
       setCurrentPage("product");
       return;
     }
-    cartContxt.addItems({ ...product, quantity });
+    console.log(selectedDimension);
+    console.log(selectedSize);
+    cartContxt.addItems({ ...product, quantity, size: selectedSize, dimension: selectedDimension });
     alert("Product Added to Cart");
   }
 
@@ -40,79 +42,71 @@ export default function MealItem({
     } catch (error) {
       alert("Error : " + error);
     }
-    // Logic for deleting the meal
-  }
-
-  function incrementQuantity() {
-    try {
-      updateQuantity(quantity, "increment");
-      alert("Sucessfully updated quantity");
-    } catch (error) {
-      alert("There was an error : " + error);
-    }
-    setQuantity((prevQuantity) => prevQuantity + 1);
-  }
-
-  function decrementQuantity() {
-    try {
-      updateQuantity(quantity, "decrement");
-      alert("Sucessfully updated quantity");
-    } catch (error) {
-      alert("There was an error : " + error);
-    }
-    setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
   }
 
   return (
-    <li
-      className="meal-item"
-      style={{ disabled: !isAdmin && product.stock == 0 }}
-    >
-      <article>
-        <img src={`${product.imageUrl}`} alt={product.name} />
-        <div>
-          <h3>{product.name} </h3>
-          <p className="meal-item-description">{product.description}</p>
-          <p>
-            <StarHalfIcon style={{ fontSize: "18px", color: "#ff7058" }} />{" "}
-            {product.rating}
-          </p>{" "}
-          <p className="meal-item-price">${product.price} </p>
-        </div>
-        <p className="meal-item-actions">
-          {!isAdmin && (
-            <Buttons
-              onClick={product.stock > 0 ? handleAddMeal : null}
-              disabled={product.stock <= 0}
-            >
-              {product.stock <= 0 ? "Out of Stock" : "+ Add to Cart"}
-            </Buttons>
-          )}
-          {isAdmin && (
-            <div className="admin-actions">
-              <EditIcon
-                sx={{ color: "#ffc404" }}
-                onClick={() => onEdit(product)} // Call onEdit when Edit button is clicked
-                aria-label="Edit"
-              />
-              <div className="quantity-controls">
-                {/* <RemoveIcon
-                  sx={{ color: "#ffc404" }}
-                  onClick={decrementQuantity}
-                  aria-label="Decrease Quantity"
-                /> */}
-                <p>{product.stock}</p>
-                {/* <AddIcon
-                  sx={{ color: "#ffc404" }}
-                  onClick={incrementQuantity}
-                  aria-label="Increase Quantity"
-                /> */}
-              </div>
-              <ClearIcon sx={{ color: "#ffc404" }} onClick={handleDelete} />
+    <>
+      <li className="meal-item">
+        <article>
+          <img src={`${product.imageUrl}`} alt={product.name} />
+          <div>
+            <h3>{product.name} </h3>
+            <p className="meal-item-description">{product.description}</p>
+            <p>
+              <StarHalfIcon style={{ fontSize: "18px", color: "#ff7058" }} />{" "}
+              {product.rating}
+            </p>{" "}
+            <div className="price-and-options">
+              <p className="meal-item-price">${product.price}</p>
+              {!isAdmin && 
+              <>
+              <select
+                value={selectedSize}
+                onChange={(e) => setSelectedSize(e.target.value)}
+                className="dropdown"
+              >
+                <option value="">Select Dimension</option>
+                <option value="Twin">Twin</option>
+                <option value="Full">Full</option>
+                <option value="Queen">Queen</option>
+                <option value="King">King</option>
+              </select>
+              <select
+                value={selectedDimension}
+                onChange={(e) => setSelectedDimension(e.target.value)}
+                className="dropdown"
+              >
+                <option value="">Select Size</option>
+                <option value="8inch">8inch</option>
+                <option value="10inch">10inch</option>
+                <option value="12inch">12inch</option>
+              </select> 
+              </>
+              }
             </div>
-          )}
-        </p>
-      </article>
-    </li>
+          </div>
+          <p className="meal-item-actions">
+            {!isAdmin && (
+              <Buttons
+                onClick={product.stock > 0 ? handleAddMeal : null}
+                disabled={product.stock <= 0}
+              >
+                {product.stock <= 0 ? "Out of Stock" : "+ Add to Cart"}
+              </Buttons>
+            )}
+            {isAdmin && (
+              <div className="admin-actions">
+                <EditIcon
+                  sx={{ color: "#ffc404" }}
+                  onClick={() => onEdit(product)}
+                  aria-label="Edit"
+                />
+                {/* <ClearIcon sx={{ color: "#ffc404" }} onClick={handleDelete} /> */}
+              </div>
+            )}
+          </p>
+        </article>
+      </li>
+    </>
   );
 }
