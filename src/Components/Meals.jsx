@@ -149,14 +149,14 @@ export default function Meals({ isAdmin, isLoggedIn, setCurrentPage }) {
     setCurrentProduct({
       name: "",
       imageUrl: "",
-      stock: 1,
       description: "",
-      price: "",
       productVariants: {
         size: "queen",
         color: "",
         dimensions: "",
         type: "Mattresses",
+        price:1,
+        stock:1
       },
     });
     setIsAdd(true);

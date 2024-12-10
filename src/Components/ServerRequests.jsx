@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_BASE_URL = "https://localhost:8080/api";
+export const API_BASE_URL = "http://localhost:8080/api";
 // Register user
 export const registerUser = async (userData) => {
   try {
@@ -116,7 +116,7 @@ export const deleteProduct = async (productId) => {
 
 export const addProduct = async (product) => {
   try {
-    product.productVariants[0]["productName"] = product.name;
+    
     const response = await axios.post(`${API_BASE_URL}/products/add`, product);
     return response; // Return the response data if needed
   } catch (error) {

@@ -1,11 +1,13 @@
 import { useContext, useState } from "react";
 import Buttons from "./UI/Buttons";
 import CartContext from "./Store/CartContext";
+import AddVariantModal from "./AddVariantModal";
 
 import ClearIcon from "@mui/icons-material/Clear";
 import EditIcon from "@mui/icons-material/Edit";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
 import { deleteProduct } from "./ServerRequests";
+
 
 export default function MealItem({
   product,
@@ -13,11 +15,13 @@ export default function MealItem({
   onEdit,
   isLoggedIn,
   setCurrentPage,
+  onAddVariant,
 }) {
   const cartContxt = useContext(CartContext);
   const [quantity, setQuantity] = useState(product.stock);
   const [selectedSize, setSelectedSize] = useState(""); // Manage selected size
   const [selectedDimension, setSelectedDimension] = useState(""); // Manage selected dimension
+  const [showModal, setShowModal] = useState(false); // Manage modal visibility
 
   function handleAddMeal() {
     if (!isLoggedIn) {
@@ -25,9 +29,12 @@ export default function MealItem({
       setCurrentPage("product");
       return;
     }
-    console.log(selectedDimension);
-    console.log(selectedSize);
-    cartContxt.addItems({ ...product, quantity, size: selectedSize, dimension: selectedDimension });
+    cartContxt.addItems({
+      ...product,
+      quantity,
+      size: selectedSize,
+      dimension: selectedDimension,
+    });
     alert("Product Added to Cart");
   }
 
@@ -35,14 +42,16 @@ export default function MealItem({
     try {
       let val = confirm("Are you sure you want to delete?");
       if (val === false) return;
-      console.log("Delete meal:", product);
       deleteProduct(product.id);
-      alert("Deleted Product Successfully !");
+      alert("Deleted Product Successfully!");
       window.location.reload();
     } catch (error) {
-      alert("Error : " + error);
+      alert("Error: " + error.message);
     }
   }
+
+  const toggleModal = () => setShowModal((prev) => !prev);
+
 
   return (
     <>
@@ -50,40 +59,100 @@ export default function MealItem({
         <article>
           <img src={`${product.imageUrl}`} alt={product.name} />
           <div>
-            <h3>{product.name} </h3>
+            <h3>{product.name}</h3>
             <p className="meal-item-description">{product.description}</p>
-            <p>
+            {isAdmin && product.productVariants && (
+  <>
+    <ul
+      className="product-variants-list"
+      style={{
+        marginTop: "10px",
+        padding: "10px",
+        border: "1px solid #ccc",
+        borderRadius: "8px",
+        backgroundColor: "#f9f9f9",
+      }}
+    >
+      {product.productVariants.map((variant, index) => (
+        <li
+          key={index}
+          className="variant-item"
+          style={{
+            marginBottom: "10px",
+            padding: "8px",
+            border: "1px solid #ddd",
+            borderRadius: "5px",
+            backgroundColor: "#fff",
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <strong>Variant {index + 1}:</strong>{" "}
+          <span style={{ color: "#007BFF" }}>Size: {variant.size}</span>,{" "}
+          <span style={{ color: "#28A745" }}>Type: {variant.type}</span>,{" "}
+          <span style={{ color: "red" }}>Dimension: {variant.dimension}</span>
+          <p style={{ margin: "5px 0", fontWeight: "bold" }}>
+            Stock: {variant.stock}
+          </p>
+          <p
+            className="meal-item-price"
+            style={{ margin: "0", color: "#FF7058", fontWeight: "bold" }}
+          >
+            ${variant.price}
+          </p>
+        </li>
+      ))}
+    </ul>
+    <p
+      style={{
+        marginTop: "10px",
+        fontWeight: "bold",
+        color: "#333",
+        fontSize: "16px",
+      }}
+    >
+      Total Stock:{" "}
+      {product.productVariants.reduce((total, variant) => total + variant.stock, 0)}
+    </p>
+  </>
+)}
+
+            {/* <p>
               <StarHalfIcon style={{ fontSize: "18px", color: "#ff7058" }} />{" "}
               {product.rating}
-            </p>{" "}
+            </p> */}
             <div className="price-and-options">
-              <p className="meal-item-price">${product.price}</p>
-              {isAdmin && <p className=" ">Stock {product.stock}</p>}
-              {!isAdmin && 
-              <>
-              <select
-                value={selectedSize}
-                onChange={(e) => setSelectedSize(e.target.value)}
-                className="dropdown"
-              >
-                <option value="">Select type</option>
-                <option value="Twin">Spring</option>
-                <option value="Full">Foam</option>
-                <option value="Queen">Latex</option>
-                <option value="King">Hybrid</option>
-              </select>
-              <select
-                value={selectedDimension}
-                onChange={(e) => setSelectedDimension(e.target.value)}
-                className="dropdown"
-              >
-                <option value="">Select Size</option>
-                <option value="8inch">8inch</option>
-                <option value="10inch">10inch</option>
-                <option value="12inch">12inch</option>
-              </select> 
-              </>
-              }
+            {!isAdmin && product.productVariants && (
+  <>
+    <select
+      value={selectedSize}
+      onChange={(e) => setSelectedSize(e.target.value)}
+      className="dropdown"
+    >
+      <option value="">Select Size</option>
+      {[...new Set(product.productVariants.map((variant) => variant.size))].map(
+        (type) => (
+          <option key={type} value={type}>
+            {type}
+          </option>
+        )
+      )}
+    </select>
+    <select
+      value={selectedDimension}
+      onChange={(e) => setSelectedDimension(e.target.value)}
+      className="dropdown"
+    >
+      <option value="">Select dimensions</option>
+      {[...new Set(product.productVariants.map((variant) => variant.dimension))].map(
+        (dimension) => (
+          <option key={dimension} value={dimension}>
+            {dimension}
+          </option>
+        )
+      )}
+    </select>
+  </>
+)}
             </div>
           </div>
           <p className="meal-item-actions">
@@ -102,12 +171,22 @@ export default function MealItem({
                   onClick={() => onEdit(product)}
                   aria-label="Edit"
                 />
-                {/* <ClearIcon sx={{ color: "#ffc404" }} onClick={handleDelete} /> */}
+                <button onClick={toggleModal} className="add-variant-button">
+                  Add Variant
+                </button>
               </div>
             )}
           </p>
         </article>
       </li>
+      {showModal && (
+        <AddVariantModal
+          product={product}
+          onClose={toggleModal}
+          onAddVariant={onAddVariant}
+        />
+      )}
     </>
   );
 }
+  
