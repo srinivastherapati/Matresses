@@ -21,21 +21,20 @@ const modalStyle = {
   p: 4,
 };
 
-export default function AddMealModal({
-  open,
-  onClose,
-  currentProduct,
-  isAdd,
-}) {
+export default function AddMealModal({ open, onClose, currentProduct, isAdd }) {
   const [name, setName] = useState(currentProduct?.name || "");
   const [imageUrl, setImageUrl] = useState(currentProduct?.imageUrl || "");
-  const [description, setDescription] = useState(currentProduct?.description || "");
+  const [description, setDescription] = useState(
+    currentProduct?.description || ""
+  );
   const [stock, setStock] = useState(currentProduct?.stock || 1);
   const [price, setPrice] = useState(currentProduct?.price || 0);
   const [productVariants, setVariants] = useState({
     size: currentProduct?.productVariants?.size || "",
     dimensions: currentProduct?.productVariants?.dimensions || "",
     type: currentProduct?.productVariants?.type || "",
+    price:currentProduct?.productVariants?.price || 0,
+    stock:currentProduct?.productVariants?.stock || 1,
   });
 
   const handleVariantChange = (key, value) => {
@@ -47,15 +46,15 @@ export default function AddMealModal({
       {
         size: productVariants.size,
         type: productVariants.type,
-        dimension: productVariants.dimensions, // Map dimensions to dimension
+        dimension: productVariants.dimensions, 
+        price:productVariants.price,
+        stock:productVariants.stock
       },
     ];
     const productData = {
       name,
       imageUrl,
       description,
-      price,
-      stock,
       productVariants: variantsArray,
     };
 
@@ -115,24 +114,6 @@ export default function AddMealModal({
             onChange={(e) => setDescription(e.target.value)}
             required
           />
-          <TextField
-            label="Price"
-            fullWidth
-            margin="normal"
-            type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-          />
-          <TextField
-            label="Stock"
-            fullWidth
-            margin="normal"
-            type="number"
-            value={stock}
-            onChange={(e) => setStock(Math.max(1, e.target.value))}
-            required
-          />
 
           <Typography variant="subtitle1" sx={{ marginTop: 2 }}>
             Product Variants
@@ -178,6 +159,24 @@ export default function AddMealModal({
             <MenuItem value="accessories">Accessories</MenuItem>
             <MenuItem value="other">Other</MenuItem>
           </TextField>
+          <TextField
+            label="Price"
+            fullWidth
+            margin="normal"
+            type="number"
+            value={productVariants.price}
+            onChange={(e) => handleVariantChange("price", e.target.value)}
+            required
+          />
+          <TextField
+            label="Stock"
+            fullWidth
+            margin="normal"
+            type="number"
+            value={productVariants.stock}
+            onChange={(e) =>handleVariantChange("stock", e.target.value)}
+            required
+          />
 
           <Button
             variant="contained"
